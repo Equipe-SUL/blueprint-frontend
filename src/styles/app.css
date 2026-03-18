@@ -1,0 +1,26 @@
+.app {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.page-content {
+  padding: 2rem;
+}
+
+.page-content.error {
+  text-align: center;
+  padding: 2rem;
+}
+
+.page-content.error details {
+  text-align: left;
+  background-color: var(--border);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.page-content.error pre {
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
