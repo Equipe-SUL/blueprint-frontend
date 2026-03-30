@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import App from './components/App'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
+import { NovaObra } from './pages/NovaObra'
 
 export const router = createBrowserRouter([
   {
@@ -12,7 +13,11 @@ export const router = createBrowserRouter([
         path: '/',
         element: <Home />,
       },
-      // Adicione mais rotas aqui
+      {
+        path: '/nova-obra', 
+        element: <NovaObra />,
+      },
     ],
   },
 ])
+
