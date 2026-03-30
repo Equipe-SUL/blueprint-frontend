@@ -16,7 +16,7 @@ export type ProjetoCreatePayload = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_obra: TipoProjeto
+    tipo_projeto: TipoProjeto
     taxa_bdi?: number
 }
 

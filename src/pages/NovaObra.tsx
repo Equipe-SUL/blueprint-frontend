@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createProjeto, uploadArquivoDXF, type TipoProjeto } from '../services/apiService'
 import '../styles/NovaObra.css';
 
 export function NovaObra() {
@@ -10,9 +11,17 @@ export function NovaObra() {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  const [dadosObra, setDadosObra] = useState({
+    nome_obra: '',
+    cidade_obra: '',
+    estado_obra: '',
+    desc_obra: '',
+    tipo_projeto: '' as '' | TipoProjeto,
+  });
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
-    const maxSize = 40 * 1024 * 1024; 
+    const maxSize = 15 * 1024 * 1024; 
     const validFiles: File[] = [];
 
     for (const file of selectedFiles) {
@@ -22,7 +31,7 @@ export function NovaObra() {
         continue;
       }
       if (file.size > maxSize) {
-        alert(`O arquivo ${file.name} ultrapassa o limite de 40MB!`);
+        alert(`O arquivo ${file.name} ultrapassa o limite de 15MB!`);
         continue;
       }
       validFiles.push(file);
@@ -30,16 +39,32 @@ export function NovaObra() {
     setFiles(prev => [...prev, ...validFiles]);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(false);
+    setSuccess(false);
 
-    
-    setTimeout(() => {
+    try {
+      const obra = await createProjeto({
+        nome_obra: dadosObra.nome_obra,
+        cidade_obra: dadosObra.cidade_obra,
+        estado_obra: dadosObra.estado_obra,
+        desc_obra: dadosObra.desc_obra,
+        tipo_projeto: dadosObra.tipo_projeto as TipoProjeto,
+      });
+
+      for (const file of files) {
+        await uploadArquivoDXF(obra.id, file);
+      }
+      
+      setSuccess(true);
+    } catch (err) {
+      console.error(err);
+      setError(true);
+    } finally {
       setLoading(false);
-      Math.random() > 0.2 ? setSuccess(true) : setError(true);
-    }, 2500);
+    }
   };
 
   return (
@@ -102,26 +127,26 @@ export function NovaObra() {
                   <form onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
                     <div className="form-field">
                       <label>Nome da Obra *</label>
-                      <input type="text" placeholder="Nome identificador" required />
+                      <input type="text" placeholder="Nome identificador" required value={dadosObra.nome_obra} onChange={(e) => setDadosObra({...dadosObra, nome_obra: e.target.value})} />
                     </div>
                     <div className="form-field">
                       <label>Cidade *</label>
-                      <input type="text" placeholder="Cidade da obra" required />
+                      <input type="text" placeholder="Cidade da obra" required value={dadosObra.cidade_obra} onChange={(e) => setDadosObra({...dadosObra, cidade_obra: e.target.value})} />
                     </div>
                     <div className="form-field">
                       <label>Estado (UF) *</label>
-                      <select required>
+                      <select required value={dadosObra.estado_obra} onChange={(e) => setDadosObra({...dadosObra, estado_obra: e.target.value})}>
                         <option value="">Selecione...</option>
                         {["SP", "RJ", "MG", "ES", "PR", "SC", "RS", "MT", "MS", "GO", "DF", "RO", "AC", "AP", "AM", "RR", "PA", "TO", "BA", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE" ].map(uf => <option key={uf} value={uf}>{uf}</option>)}
                       </select>
                     </div>
                     <div className="form-field">
                       <label>Descrição Breve *</label>
-                      <input type="text" placeholder="Ex: Terraplanagem setor norte" required />
+                      <input type="text" placeholder="Ex: Terraplanagem setor norte" required value={dadosObra.desc_obra} onChange={(e) => setDadosObra({...dadosObra, desc_obra: e.target.value})} />
                     </div>
                     <div className="form-field">
                       <label>Tipo de Obra *</label>
-                      <select required>
+                      <select required value={dadosObra.tipo_projeto} onChange={(e) => setDadosObra({...dadosObra, tipo_projeto: e.target.value as TipoProjeto})}>
                         <option value="">Selecione o tipo...</option>
                         <option value="hidraulica">Hidraulica</option>
                         <option value="eletrica">Elétrica</option>
