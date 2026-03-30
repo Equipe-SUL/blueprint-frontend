@@ -1,22 +1,21 @@
 const DEFAULT_API_BASE = 'http://127.0.0.1:8000'
 
 export const API_BASE: string =
-  (import.meta as any).env?.VITE_API_BASE_URL ?? DEFAULT_API_BASE
+    import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE
 
-  export type TipoProjeto = 
+export type TipoProjeto =
     | 'eletrica'
     | 'hidraulica'
     | 'alvenaria'
     | 'spda'
     | 'combate_a_incendio'
-    | 'null'
 
 export type ProjetoCreatePayload = {
     nome_obra: string
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: TipoProjeto
+    tipo_projeto: TipoProjeto[]
     taxa_bdi?: number
 }
 
@@ -89,7 +88,7 @@ export async function deleteProjeto(id: number): Promise<void> {
 }
 
 // Upload de arquivo DXF para um projeto específico
-export async function uploadArquivoDXF(projetoId: number, file: File): Promise<void> {
+export async function uploadArquivoDXF(projetoId: number, file: File): Promise<unknown> {
     const formData = new FormData()
     formData.append('arquivo', file)
 

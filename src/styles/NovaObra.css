@@ -46,9 +46,13 @@
     border-radius: 16px;
     padding: 32px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     width: 550px;
-    height: 720px;
+    min-height: 720px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 #pobras{
@@ -115,12 +119,70 @@
 }
 .submit-btn:hover { background: #00a5e6; transform: translateY(-2px); }
 
+/* Multi-seleção de tipos (chips) */
+.tipo-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.tipo-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.tipo-chip-remove {
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+    line-height: 1;
+    font-size: 16px;
+    padding: 0;
+}
+
+.tipo-chip-remove:hover {
+    opacity: 0.8;
+}
+
+.upload-help {
+    font-size: 11px;
+    text-align: center;
+}
+
+.actions-row {
+    display: flex;
+    gap: 10px;
+}
+
+.step-warning {
+    margin-top: -20px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: left;
+    padding: 10px;
+    background-color: rgba(255, 255, 68, 0.2);
+    border: 1px solid rgba(255, 255, 68, 0.3);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
 
 @media (max-width: 768px) {
 
    .obra-card {
     width: 20.2em;
-    height: 38em;
+    min-height: 38em;
+    height: auto;
 }
 }
 
@@ -286,7 +348,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    flex: 1;
     width: 100%;
     text-align: center;
     animation: fadeIn 0.5s ease-in-out;
@@ -298,11 +360,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    flex: 1;
     width: 100%;
     text-align: center;
     animation: fadeIn 0.5s ease-in-out;
-    margin-top: 1.5em;
 }
 }
 

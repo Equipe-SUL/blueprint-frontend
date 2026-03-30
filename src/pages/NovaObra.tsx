@@ -11,13 +11,41 @@ export function NovaObra() {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
+  const tipoProjetoOptions: Array<{ value: TipoProjeto; label: string }> = [
+    { value: 'hidraulica', label: 'Hidraulica' },
+    { value: 'eletrica', label: 'Elétrica' },
+    { value: 'alvenaria', label: 'Alvenaria' },
+    { value: 'spda', label: 'SPDA' },
+    { value: 'combate_a_incendio', label: 'Combate a incêndio' },
+  ];
+
   const [dadosObra, setDadosObra] = useState({
     nome_obra: '',
     cidade_obra: '',
     estado_obra: '',
     desc_obra: '',
-    tipo_projeto: '' as '' | TipoProjeto,
+    tipo_projeto: [] as TipoProjeto[],
   });
+
+  const [tipoSelecionado, setTipoSelecionado] = useState<TipoProjeto | ''>('');
+
+  const adicionarTipo = (tipo: TipoProjeto) => {
+    setDadosObra((prev) => {
+      if (prev.tipo_projeto.includes(tipo)) return prev;
+      return { ...prev, tipo_projeto: [...prev.tipo_projeto, tipo] };
+    });
+  };
+
+  const removerTipo = (tipo: TipoProjeto) => {
+    setDadosObra((prev) => ({
+      ...prev,
+      tipo_projeto: prev.tipo_projeto.filter((t) => t !== tipo),
+    }));
+  };
+
+  const tiposSelecionadosTexto = dadosObra.tipo_projeto
+    .map((tipo) => tipoProjetoOptions.find((o) => o.value === tipo)?.label ?? tipo)
+    .join(', ');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -51,7 +79,7 @@ export function NovaObra() {
         cidade_obra: dadosObra.cidade_obra,
         estado_obra: dadosObra.estado_obra,
         desc_obra: dadosObra.desc_obra,
-        tipo_projeto: dadosObra.tipo_projeto as TipoProjeto,
+        tipo_projeto: dadosObra.tipo_projeto,
       });
 
       for (const file of files) {
@@ -124,7 +152,14 @@ export function NovaObra() {
                     <h2>Dados da Obra</h2>
                     <p>Passo 1 de 2</p>
                   </div>
-                  <form onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    if (dadosObra.tipo_projeto.length === 0) {
+                      alert('Selecione pelo menos um tipo de obra.');
+                      return;
+                    }
+                    setStep(2);
+                  }}>
                     <div className="form-field">
                       <label>Nome da Obra *</label>
                       <input type="text" placeholder="Nome identificador" required value={dadosObra.nome_obra} onChange={(e) => setDadosObra({...dadosObra, nome_obra: e.target.value})} />
@@ -135,7 +170,7 @@ export function NovaObra() {
                     </div>
                     <div className="form-field">
                       <label>Estado (UF) *</label>
-                      <select required value={dadosObra.estado_obra} onChange={(e) => setDadosObra({...dadosObra, estado_obra: e.target.value})}>
+                      <select required aria-label="Estado (UF)" value={dadosObra.estado_obra} onChange={(e) => setDadosObra({...dadosObra, estado_obra: e.target.value})}>
                         <option value="">Selecione...</option>
                         {["SP", "RJ", "MG", "ES", "PR", "SC", "RS", "MT", "MS", "GO", "DF", "RO", "AC", "AP", "AM", "RR", "PA", "TO", "BA", "MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE" ].map(uf => <option key={uf} value={uf}>{uf}</option>)}
                       </select>
@@ -146,14 +181,44 @@ export function NovaObra() {
                     </div>
                     <div className="form-field">
                       <label>Tipo de Obra *</label>
-                      <select required value={dadosObra.tipo_projeto} onChange={(e) => setDadosObra({...dadosObra, tipo_projeto: e.target.value as TipoProjeto})}>
+                      <select
+                        aria-label="Tipo de Obra"
+                        value={tipoSelecionado}
+                        onChange={(e) => {
+                          const value = e.target.value as TipoProjeto | '';
+                          if (!value) return;
+                          adicionarTipo(value);
+                          setTipoSelecionado('');
+                        }}
+                      >
                         <option value="">Selecione o tipo...</option>
-                        <option value="hidraulica">Hidraulica</option>
-                        <option value="eletrica">Elétrica</option>
-                        <option value="alvenaria">Alvenaria</option>
-                        <option value="spda">SPDA</option>
-                        <option value="combate_a_incendio">Combate a incêndio</option>
+                        {tipoProjetoOptions.map((op) => (
+                          <option key={op.value} value={op.value}>
+                            {op.label}
+                          </option>
+                        ))}
                       </select>
+
+                      {dadosObra.tipo_projeto.length > 0 && (
+                        <div className="tipo-chips">
+                          {dadosObra.tipo_projeto.map((tipo) => {
+                            const label = tipoProjetoOptions.find((o) => o.value === tipo)?.label ?? tipo;
+                            return (
+                              <span key={tipo} className="tipo-chip">
+                                {label}
+                                <button
+                                  type="button"
+                                  className="tipo-chip-remove"
+                                  aria-label={`Remover tipo ${label}`}
+                                  onClick={() => removerTipo(tipo)}
+                                >
+                                  ×
+                                </button>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                     <button type="submit" className="submit-btn">Próxima Etapa</button>
                   </form>
@@ -165,6 +230,9 @@ export function NovaObra() {
                     <h2>Arquivos DXF</h2>
                     <p>Passo 2 de 2</p>
                   </div>
+                  <p className="step-warning">
+                    Envie somente arquivos DXF dos tipos de obra selecionados: {tiposSelecionadosTexto}
+                  </p>
                   <form onSubmit={handleSubmit}>
                     <div className="form-field">
                       <label>Plantas e Projetos (DXF) *</label>
@@ -180,7 +248,7 @@ export function NovaObra() {
                         <label id='labelupload' htmlFor="file-upload" className="upload-label">
                           <div className="upload-icon">↑</div>
                           <strong>{files.length > 0 ? `${files.length} arquivo(s) selecionado(s)` : "Clique para selecionar DXFs"}</strong>
-                          <span style={{fontSize: '11px', textAlign: 'center'}}>Apenas .dxf | Máx 40MB por arquivo</span>
+                          <span className="upload-help">Apenas .dxf | Máx 15MB por arquivo</span>
                         </label>
                       </div>
                       {files.length > 0 && (
@@ -189,7 +257,7 @@ export function NovaObra() {
                         </div>
                       )}
                     </div>
-                    <div style={{display: 'flex', gap: '10px'}}>
+                    <div className="actions-row">
                       <button type="button" className="submit-btn retry-btn" onClick={() => setStep(1)}>Voltar</button>
                       <button type="submit" className="submit-btn" disabled={files.length === 0}>Finalizar Cadastro</button>
                     </div>
