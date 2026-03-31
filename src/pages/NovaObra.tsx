@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProjeto, uploadArquivoDXF, type TipoProjeto } from '../services/apiService'
 import '../styles/NovaObra.css';
+import Footer from '../components/Footer';
 
 export function NovaObra() {
   const [step, setStep] = useState(1); 
@@ -96,6 +97,7 @@ export function NovaObra() {
   };
 
   return (
+    <>
     <div className="nova-obra-page">
       <div className="container-form">
         <header className="header-section">
@@ -269,5 +271,7 @@ export function NovaObra() {
         </main>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
