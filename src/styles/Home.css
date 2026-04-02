@@ -126,6 +126,11 @@
 }
 
 @media (max-width: 980px) {
+    .obras-toolbar, .header-section, .list-title {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
     .obras-toolbar {
         grid-template-columns: 1fr;
     }

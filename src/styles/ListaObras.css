@@ -9,8 +9,7 @@
     margin-left: 10%;
     margin-right: 10%;
     height: 550px;
-    min-width: 720px;
-    justify-content: centers;
+    justify-content: center;
     height: auto;
     display: flex;
     max-height: 500px; /* controla altura visível */
@@ -34,6 +33,11 @@
 @media (max-width: 800px) {
   .project-scroll {
     grid-template-columns: 1fr;
+  }
+  .project-container {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 16px;
   }
 }
 
