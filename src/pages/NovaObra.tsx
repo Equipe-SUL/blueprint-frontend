@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createProjeto, uploadArquivoDXF, type TipoProjeto } from '../services/apiService'
 import '../styles/NovaObra.css';
 import Footer from '../components/Footer';
+import Logo from '../components/Logo';
 
 export function NovaObra() {
   const [step, setStep] = useState(1); 
@@ -104,7 +105,7 @@ export function NovaObra() {
           <div className="logo-group">
             <div className="logo-sq"><img src="/upload.png" alt="Logo Icon" /></div>
             <div className="logo-txt">
-              <h1>Blueprint</h1>
+              <h1><Logo colorBluePart="#ffffff" colorPrintPart="#1e90ff" /></h1>
               <p id='pobras'>Sistema de Gestão de Obras</p>
             </div>
           </div>

@@ -1,14 +1,14 @@
 import React from "react";
+import Logo from "./Logo";
 import "../styles/Footer.css";
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
-        
+
         <div className="footer-left">
-          <h3>BluePrint</h3>
-          <p>Gerenciamento de projetos e obras.</p>
+          <h3><Logo /></h3>
         </div>
 
         <div className="footer-right">

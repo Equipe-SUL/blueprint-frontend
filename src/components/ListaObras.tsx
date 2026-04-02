@@ -1,99 +1,135 @@
 import React, { useEffect, useState } from "react";
 import { getProjetos } from "../services/apiService";
-import type { Projeto } from "../services/apiService";
+import type { Projeto, TipoProjeto } from "../services/apiService";
+import ProjectCard from "./ProjectCard.tsx";
 import "../styles/ListaObras.css";
 
+type ProjectListProps = {
+  searchTerm?: string;
+  tipoFilter?: TipoProjeto | "";
+};
 
-const ProjectList: React.FC = () => {
+const ProjectList: React.FC<ProjectListProps> = ({
+  searchTerm = "",
+  tipoFilter = "",
+}) => {
   const [projetos, setProjetos] = useState<Projeto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-const formatTipo = (tipo: string) => {
-  return tipo
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
-};
+  const carregarProjetos = async () => {
+    setLoading(true);
+    setError(null);
 
-useEffect(() => {
-  setProjetos([
-    {
-      id: 1,
-      nome_obra: "Obra X",
-      cidade_obra: "São Paulo",
-      estado_obra: "SP",
-      desc_obra: "Esse projeto consiste em canos de esgoto.",
-      tipo_projeto: ["hidraulica", "alvenaria"],
-    },
-        {
-      id: 2,
-      nome_obra: "Obra Y",
-      cidade_obra: "Rio de Janeiro",
-      estado_obra: "RJ",
-      desc_obra: "Esse projeto consiste em canos de esgoto.",
-      tipo_projeto: ["alvenaria"],
-    },
-            {
-      id: 2,
-      nome_obra: "Obra Y",
-      cidade_obra: "Rio de Janeiro",
-      estado_obra: "RJ",
-      desc_obra: "Esse projeto consiste em canos de esgoto.",
-      tipo_projeto: ["alvenaria"],
-    },
-            {
-      id: 2,
-      nome_obra: "Obra Y",
-      cidade_obra: "Rio de Janeiro",
-      estado_obra: "RJ",
-      desc_obra: "Esse projeto consiste em canos de esgoto.",
-      tipo_projeto: ["alvenaria"],
-    },
-  ]);
-  setLoading(false);
-}, []);
+    try {
+      const data = await getProjetos();
+      setProjetos(data);
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "Erro ao carregar projetos";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function carregarProjetosComGuard() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await getProjetos();
+        if (!cancelled) {
+          setProjetos(data);
+        }
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Erro ao carregar projetos";
+        if (!cancelled) {
+          setError(msg);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    carregarProjetosComGuard();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (loading) {
-    return <div className="placeholder">Carregando projetos...</div>;
+    return (
+      <div className="project-container list-loading-wrapper">
+        <div className="list-loader">
+          {[...Array(7)].map((_, i) => (
+            <div key={i} className="list-loader-square"></div>
+          ))}
+        </div>
+        <p className="list-loading-text">Carregando obras...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="placeholder">Nenhum projeto carregado</div>;
+    return (
+      <div className="project-container list-error-wrapper">
+        <div className="list-error-box">
+          <h3>Falha ao carregar obras</h3>
+          <p>{error}</p>
+          <button className="list-retry-btn" onClick={carregarProjetos}>
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
   }
+
+  const searchNormalized = searchTerm.trim().toLowerCase();
+  const projetosFiltrados = projetos.filter((proj) => {
+    const bateTipo = !tipoFilter || proj.tipo_projeto.includes(tipoFilter);
+    if (!searchNormalized) return bateTipo;
+
+    const textoBase = [
+      proj.nome_obra,
+      proj.cidade_obra,
+      proj.estado_obra,
+      proj.desc_obra,
+      proj.tipo_projeto.join(" "),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return bateTipo && textoBase.includes(searchNormalized);
+  });
+
+  const temFiltroAtivo = Boolean(searchNormalized || tipoFilter);
 
   return (
     <div className="project-container">
-      {projetos.length === 0 ? (
+      {projetosFiltrados.length === 0 ? (
         <div className="placeholder">
-          <p>Nenhum projeto cadastrado ainda.</p>
+          <p>
+            {temFiltroAtivo
+              ? "Nenhuma obra encontrada para os filtros informados."
+              : "Nenhum projeto cadastrado ainda."}
+          </p>
         </div>
       ) : (
         <div className="project-scroll">
-          {projetos.map((proj) => (
-            <div
+          {projetosFiltrados.map((proj) => (
+            <ProjectCard
               key={proj.id}
-              className="project-card"
+              projeto={proj}
               onClick={() => console.log("Clicou:", proj.id)}
-            >
-              <h3>{proj.nome_obra}</h3>
-
-              <p className="location">
-                {proj.cidade_obra} - {proj.estado_obra}
-              </p>
-
-              <p className="descricao">
-                {proj.desc_obra}
-              </p>
-
-            <div className="tipo-container">
-            {proj.tipo_projeto.map((tipo, i) => (
-                <span key={i} className="tipo-badge">
-                {formatTipo(tipo)}
-                </span>
-            ))}
-            </div>
-
-            </div>
+            />
           ))}
         </div>
       )}
