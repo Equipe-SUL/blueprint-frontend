@@ -1,0 +1,313 @@
+.project-container {
+    background-color: rgba(20, 20, 20, 0.95);
+    border: 1px solid #333333;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 550px;
+    justify-content: center;
+    height: auto;
+    display: flex;
+    max-height: 500px; /* controla altura visível */
+    overflow-y: auto;
+    flex-direction: column;
+}
+
+.project-scroll {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  justify-content: start;
+}
+
+@media (max-width: 1180px) {
+  .project-scroll {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .project-scroll {
+    grid-template-columns: 1fr;
+  }
+  .project-container {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding: 16px;
+  }
+}
+
+/* Scroll vertical */
+.project-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.project-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.project-container::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 16px;
+  transition: background 0.2s ease;
+}
+
+.project-container::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6; 
+}
+
+/*
+.project-card {
+  width: 260px;
+  background-color: rgba(52, 52, 52, 0.95);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 0;
+  border: 1px solid #838383;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: #3b82f6; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+*/
+.project-card {
+  width: 100%;
+  min-height: 180px;
+
+  background: linear-gradient(145deg, #151515, #0d0d0d);
+  border-radius: 16px;
+  padding: 18px;
+
+  border: 1px solid rgba(59, 130, 246, 0.3);
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* linha decorativa azul */
+.project-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 4px;
+
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+/* hover */
+.project-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+
+.project-card h3 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.location {
+  font-size: 13px;
+  color: #b3bbcd;
+}
+.project-card hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 10px 0;
+}
+
+.tipo-container {
+  display: flex;
+  flex-wrap: wrap; /* 👈 permite quebrar linha */
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tipo-eletrica {
+  background: rgba(251, 191, 36, 0.16);
+  color: #facc15;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.tipo-hidraulica {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.tipo-alvenaria {
+  background: rgba(251, 146, 60, 0.16);
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, 0.35);
+}
+
+.tipo-spda {
+  background: rgba(167, 139, 250, 0.16);
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+}
+
+.tipo-combate_a_incendio {
+  background: rgba(248, 113, 113, 0.16);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.tipo-default {
+  background: rgba(148, 163, 184, 0.16);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+/* descrição */
+.descricao {
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* limita linhas */
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.project-card:active {
+  transform: scale(0.98);
+}
+
+.placeholder {
+  width: 100%;
+  height: 120px;
+  background-color: #e5e7eb;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.list-loading-wrapper {
+  align-items: center;
+  justify-content: center;
+}
+
+.list-loader {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  transform: rotate(45deg);
+}
+
+.list-loader-square {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  margin: 2px;
+  background: #ffffff;
+  animation: list-square-animation 10s ease-in-out infinite both;
+}
+
+.list-loader-square:nth-of-type(1) { animation-delay: -1.4285714286s; }
+.list-loader-square:nth-of-type(2) { animation-delay: -2.8571428571s; }
+.list-loader-square:nth-of-type(3) { animation-delay: -4.2857142857s; }
+.list-loader-square:nth-of-type(4) { animation-delay: -5.7142857143s; }
+.list-loader-square:nth-of-type(5) { animation-delay: -7.1428571429s; }
+.list-loader-square:nth-of-type(6) { animation-delay: -8.5714285714s; }
+
+.list-loading-text {
+  margin-top: 24px;
+  color: #888;
+  font-weight: 500;
+}
+
+.list-error-wrapper {
+  align-items: center;
+  justify-content: center;
+}
+
+.list-error-box {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  background: rgba(255, 68, 68, 0.08);
+  border: 1px solid rgba(255, 68, 68, 0.35);
+}
+
+.list-error-box h3 {
+  color: #ffb4b4;
+  margin-bottom: 8px;
+}
+
+.list-error-box p {
+  color: #ffdada;
+  margin-bottom: 16px;
+  word-break: break-word;
+}
+
+.list-retry-btn {
+  background: #03409c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.list-retry-btn:hover {
+  background: #00a5e6;
+}
+
+@keyframes list-square-animation {
+  0%, 10.5%, 100% { left: 0; top: 0; }
+  12.5%, 23% { left: 32px; top: 0; }
+  25%, 35.5% { left: 64px; top: 0; }
+  37.5%, 48% { left: 64px; top: 32px; }
+  50%, 60.5% { left: 32px; top: 32px; }
+  62.5%, 73% { left: 32px; top: 64px; }
+  75%, 85.5% { left: 0; top: 64px; }
+  87.5%, 98% { left: 0; top: 32px; }
+}
