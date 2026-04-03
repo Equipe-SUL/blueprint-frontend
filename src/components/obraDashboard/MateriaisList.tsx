@@ -77,6 +77,28 @@ export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProp
         })
     }, [itens, pesquisa])
 
+    const precoTotalMateriais = useMemo(() => {
+        const parseNumero = (valor: string | number | undefined) => {
+            if (valor === undefined) return 0
+            if (typeof valor === 'number') return Number.isFinite(valor) ? valor : 0
+
+            const normalizado = valor.replace(/\s/g, '').replace(',', '.')
+            const parsed = Number.parseFloat(normalizado)
+            return Number.isFinite(parsed) ? parsed : 0
+        }
+
+        return itensFiltrados.reduce((acc, item) => {
+            const quantidade = parseNumero(item.quantidade)
+            const precoUnitario = parseNumero(item.preco_unitario)
+            return acc + (quantidade * precoUnitario)
+        }, 0)
+    }, [itensFiltrados])
+
+    const precoTotalFormatado = useMemo(
+        () => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(precoTotalMateriais),
+        [precoTotalMateriais]
+    )
+
     if (loading) {
         return <DashboardLoader message="Carregando materiais..." />
     }
@@ -96,32 +118,39 @@ export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProp
     }
 
     return (
-        <div className="materiais-table-wrap">
-            <table className="materiais-table">
-            <thead className="materiais-table-head">
-                <tr>
-                    <th>ID</th>
-                    <th>Descrição</th>
-                    <th>Quantidade</th>
-                    <th>Unidade</th>
-                    <th>Origem</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody className="materiais-table-body">
-                {itensFiltrados.map((item) => (
-                    <tr key={item.id}>
-                        <td>{item.id}</td>
-                        <td>{item.descricao_original ?? item.descricao}</td>
-                        <td>{item.quantidade}</td>
-                        <td>{item.unidade}</td>
-                        <td>{item.origem}</td>
-                        <td>{item.status_mapeamento}</td>
+        <>
+            <div className="materiais-table-wrap">
+                <table className="materiais-table">
+                <thead className="materiais-table-head">
+                    <tr>
+                        <th>ID</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Unidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Origem</th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
-        </div>
+                </thead>
+                <tbody className="materiais-table-body">
+                    {itensFiltrados.map((item) => (
+                        <tr key={item.id}>
+                            <td>{item.id}</td>
+                            <td>{item.descricao_original ?? item.descricao}</td>
+                            <td>{item.quantidade}</td>
+                            <td>{item.unidade}</td>
+                            <td>{item.preco_unitario}</td>
+                            <td>{item.origem}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            </div>
+
+            <div className="materiais-total-wrap">
+                <span className="materiais-total-label">Preço total de materiais:</span>
+                <strong className="materiais-total-value">{precoTotalFormatado}</strong>
+            </div>
+        </>
     )
 }
 

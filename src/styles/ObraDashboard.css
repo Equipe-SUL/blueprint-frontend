@@ -85,6 +85,55 @@
 	color: #ffffff;
 }
 
+.obra-head-actions {
+	position: relative;
+}
+
+.obra-head-dropdown {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 170px;
+	padding: 6px;
+	background: #121212;
+	border: 1px solid #333333;
+	border-radius: 10px;
+	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+	z-index: 20;
+}
+
+.obra-head-dropdown-item {
+	background: transparent;
+	border: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	text-align: left;
+	padding: 10px 12px;
+	border-radius: 8px;
+	color: #e5e7eb;
+	font-size: 14px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.obra-head-dropdown-item:hover {
+	background: rgba(59, 130, 246, 0.16);
+	color: #ffffff;
+}
+
+.obra-head-dropdown-item--danger {
+	color: #fda4af;
+}
+
+.obra-head-dropdown-item--danger:hover {
+	background: rgba(239, 68, 68, 0.2);
+	color: #fecaca;
+}
+
 .obra-tabs {
 	display: flex;
 	justify-content: space-between;
@@ -210,6 +259,78 @@
 	display: none;
 }
 
+.obra-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+	padding: 20px;
+}
+
+.obra-modal-card {
+	width: 100%;
+	max-width: 460px;
+	background: #151515;
+	border: 1px solid #333333;
+	border-radius: 12px;
+	padding: 20px;
+	box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.obra-modal-card h3 {
+	margin: 0 0 10px;
+	color: #ffffff;
+	font-size: 20px;
+}
+
+.obra-modal-card p {
+	margin: 0;
+	color: #d5d8e1;
+	line-height: 1.5;
+}
+
+.obra-modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.obra-modal-btn {
+	border: none;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	background: #03409c;
+	color: #ffffff;
+	transition: 0.2s;
+}
+
+.obra-modal-btn:hover {
+	background: #00a5e6;
+}
+
+.obra-modal-btn--ghost {
+	background: #2a2a2a;
+	color: #e5e7eb;
+}
+
+.obra-modal-btn--ghost:hover {
+	background: #3b3b3b;
+}
+
+.obra-modal-btn--danger {
+	background: #b91c1c;
+}
+
+.obra-modal-btn--danger:hover {
+	background: #dc2626;
+}
+
 .obra-dashboard-loading {
 	display: flex;
 	flex-direction: column;
@@ -281,6 +402,25 @@
 
 .materiais-table tbody tr:hover {
 	background: rgba(59, 130, 246, 0.08);
+}
+
+.materiais-total-wrap {
+	display: flex;
+	justify-content: flex-end;
+	align-items: baseline;
+	gap: 8px;
+	margin-top: 10px;
+	padding: 0 4px;
+}
+
+.materiais-total-label {
+	color: #b3bbcd;
+	font-size: 14px;
+}
+
+.materiais-total-value {
+	color: #ffffff;
+	font-size: 18px;
 }
 
 .arquivos-grid {

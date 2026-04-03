@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { MagnifyingGlass } from 'phosphor-react'
 import ObraHead from '../components/obraDashboard/ObraHead'
 import ObraTabs from '../components/obraDashboard/ObraTabs'
 import MateriaisList from '../components/obraDashboard/MateriaisList'
 import ArquivosList from '../components/obraDashboard/ArquivosList'
-import { getProjetoById } from '../services/apiService'
+import { deleteProjeto, getProjetoById } from '../services/apiService'
 import '../styles/ObraDashboard.css'
 
 type AbaAtiva = 'materiais' | 'arquivos'
@@ -21,12 +21,16 @@ type ProjetoResumo = {
 
 export function ObraDashboard() {
     const { id } = useParams()
+    const navigate = useNavigate()
     const [projeto, setProjeto] = useState<ProjetoResumo | null>(null)
     const [abaAtiva, setAbaAtiva] = useState<AbaAtiva>('materiais')
     const [pesquisa, setPesquisa] = useState('')
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [reloadProjetoKey, setReloadProjetoKey] = useState(0)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
+    const [infoModalMessage, setInfoModalMessage] = useState('')
 
     useEffect(() => {
         async function carregarProjeto() {
@@ -50,6 +54,30 @@ export function ObraDashboard() {
 
     const acaoLabel = abaAtiva === 'materiais' ? 'Adicionar material' : 'Associar planta'
 
+    function handleDeleteObra() {
+        setIsDeleteModalOpen(true)
+    }
+
+    async function confirmDeleteObra() {
+        if (!id) return
+
+        try {
+            await deleteProjeto(Number(id))
+            setIsDeleteModalOpen(false)
+            navigate('/obras')
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Falha ao excluir obra.'
+            setIsDeleteModalOpen(false)
+            setInfoModalMessage(`Erro ao excluir obra: ${msg}`)
+            setIsInfoModalOpen(true)
+        }
+    }
+
+    function handleEditObra() {
+        setInfoModalMessage('Funcionalidade em construção.')
+        setIsInfoModalOpen(true)
+    }
+
     return (
         <div className="obra-dashboard-page">
             <div className="obra-dashboard-container">
@@ -58,6 +86,8 @@ export function ObraDashboard() {
                     loading={loading}
                     errorMessage={error}
                     onRetry={() => setReloadProjetoKey((prev) => prev + 1)}
+                    onEditObra={handleEditObra}
+                    onDeleteObra={handleDeleteObra}
                     onMenuClick={() => console.log('Abrir menu de ações da obra')}
                 />
 
@@ -101,6 +131,49 @@ export function ObraDashboard() {
                     )}
                 </section>
             </div>
+
+            {isDeleteModalOpen && (
+                <div className="obra-modal-overlay" role="dialog" aria-modal="true" aria-label="Confirmar exclusão de obra">
+                    <div className="obra-modal-card">
+                        <h3>Excluir obra</h3>
+                        <p>Tem certeza que deseja excluir esta obra? Essa ação não pode ser desfeita.</p>
+                        <div className="obra-modal-actions">
+                            <button
+                                type="button"
+                                className="obra-modal-btn obra-modal-btn--ghost"
+                                onClick={() => setIsDeleteModalOpen(false)}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                className="obra-modal-btn obra-modal-btn--danger"
+                                onClick={confirmDeleteObra}
+                            >
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isInfoModalOpen && (
+                <div className="obra-modal-overlay" role="dialog" aria-modal="true" aria-label="Aviso">
+                    <div className="obra-modal-card">
+                        <h3>Aviso</h3>
+                        <p>{infoModalMessage}</p>
+                        <div className="obra-modal-actions">
+                            <button
+                                type="button"
+                                className="obra-modal-btn"
+                                onClick={() => setIsInfoModalOpen(false)}
+                            >
+                                Entendi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 } 

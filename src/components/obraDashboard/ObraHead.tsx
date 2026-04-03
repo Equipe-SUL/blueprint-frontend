@@ -1,4 +1,5 @@
-import { DotsThreeVertical } from "phosphor-react";
+import { useEffect, useRef, useState } from "react";
+import { DotsThreeVertical, PencilSimple, Trash } from "phosphor-react";
 import TipoBadge from "../TipoBadge";
 import DashboardLoader from "./DashboardLoader";
 import DashboardError from "./DashboardError";
@@ -17,6 +18,8 @@ type ObraHeadProps = {
     loading?: boolean
     errorMessage?: string | null
     onRetry?: () => void
+    onEditObra: () => void
+    onDeleteObra: () => void
     onMenuClick: () => void
 }
 
@@ -25,8 +28,24 @@ export default function ObraHead({
     loading = false,
     errorMessage = null,
     onRetry,
+    onEditObra,
+    onDeleteObra,
     onMenuClick,
 }: ObraHeadProps) {
+    const [menuOpen, setMenuOpen] = useState(false)
+    const menuRef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
     if (loading) {
         return (
             <header className="obra-head obra-head--loading">
@@ -68,10 +87,47 @@ export default function ObraHead({
             </div>
             
             {/* Botão de Ações */}
-            <div className="obra-head-actions">
-                <button className="obra-head-menu-btn" onClick={onMenuClick} aria-label="Ações da obra">
+            <div className="obra-head-actions" ref={menuRef}>
+                <button
+                    className="obra-head-menu-btn"
+                    onClick={() => {
+                        onMenuClick()
+                        setMenuOpen((prev) => !prev)
+                    }}
+                    aria-label="Ações da obra"
+                    aria-haspopup="menu"
+                >
                     <DotsThreeVertical size={20} />
                 </button>
+
+                {menuOpen && (
+                    <div className="obra-head-dropdown" role="menu">
+                        <button
+                            type="button"
+                            className="obra-head-dropdown-item"
+                            role="menuitem"
+                            onClick={() => {
+                                setMenuOpen(false)
+                                onEditObra()
+                            }}
+                        >
+                            <PencilSimple size={16} weight="bold" />
+                            Editar obra
+                        </button>
+                        <button
+                            type="button"
+                            className="obra-head-dropdown-item obra-head-dropdown-item--danger"
+                            role="menuitem"
+                            onClick={() => {
+                                setMenuOpen(false)
+                                onDeleteObra()
+                            }}
+                        >
+                            <Trash size={16} weight="bold" />
+                            Excluir obra
+                        </button>
+                    </div>
+                )}
             </div>
         </header>
     )

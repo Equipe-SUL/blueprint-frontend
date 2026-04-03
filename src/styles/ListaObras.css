@@ -12,7 +12,6 @@
     justify-content: center;
     height: auto;
     display: flex;
-    max-height: 500px; /* controla altura visível */
     overflow-y: auto;
     flex-direction: column;
 }
