@@ -299,6 +299,48 @@
 	margin-top: 18px;
 }
 
+.obra-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 14px;
+}
+
+.obra-form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.obra-form-field span {
+	font-size: 13px;
+	color: #b3bbcd;
+}
+
+.obra-form-field input {
+	background: #111111;
+	border: 1px solid #343434;
+	border-radius: 8px;
+	padding: 10px 12px;
+	color: #ffffff;
+	font-size: 14px;
+	outline: none;
+}
+
+.obra-form-field input:focus {
+	border-color: #3b82f6;
+}
+
+.obra-form-alert {
+	margin-top: 12px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	border: 1px solid rgba(239, 68, 68, 0.4);
+	background: rgba(239, 68, 68, 0.12);
+	color: #fecaca;
+	font-size: 14px;
+}
+
 .obra-modal-btn {
 	border: none;
 	border-radius: 8px;
@@ -467,6 +509,10 @@
 	.obra-tabs {
 		flex-direction: column;
 		align-items: stretch;
+	}
+
+	.obra-form-grid {
+		grid-template-columns: 1fr;
 	}
 
 	.obra-tabs-action-wrap .submit-btn {

@@ -22,9 +22,10 @@ type ItensResponse = {
 type MateriaisListProps = {
     projetoId: number
     pesquisa: string
+    externalRefreshKey?: number
 }
 
-export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProps) {
+export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey = 0 }: MateriaisListProps) {
     const [itens, setItens] = useState<MaterialItem[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -55,7 +56,7 @@ export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProp
         }
 
         carregarItens()
-    }, [projetoId, reloadKey])
+    }, [projetoId, reloadKey, externalRefreshKey])
 
     const itensFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
