@@ -5,6 +5,9 @@ import ObraHead from '../components/obraDashboard/ObraHead'
 import ObraTabs from '../components/obraDashboard/ObraTabs'
 import MateriaisList from '../components/obraDashboard/MateriaisList'
 import ArquivosList from '../components/obraDashboard/ArquivosList'
+import AddMaterialModal from '../components/obraDashboard/AddMaterialModal'
+import DeleteObraModal from '../components/obraDashboard/DeleteObraModal'
+import InfoModal from '../components/obraDashboard/InfoModal'
 import { createItemProjeto, deleteProjeto, getProjetoById } from '../services/apiService'
 import '../styles/ObraDashboard.css'
 
@@ -97,6 +100,15 @@ export function ObraDashboard() {
         })
         setAddMaterialError(null)
         setIsAddMaterialModalOpen(true)
+    }
+
+    function handleChangeNovoMaterial(field: keyof typeof novoMaterial, value: string) {
+        setNovoMaterial((prev) => ({ ...prev, [field]: value }))
+    }
+
+    function fecharAdicionarMaterial() {
+        setIsAddMaterialModalOpen(false)
+        setAddMaterialError(null)
     }
 
     async function handleSalvarMaterial() {
@@ -208,127 +220,27 @@ export function ObraDashboard() {
                 </section>
             </div>
 
-            {isDeleteModalOpen && (
-                <div className="obra-modal-overlay" role="dialog" aria-modal="true" aria-label="Confirmar exclusão de obra">
-                    <div className="obra-modal-card">
-                        <h3>Excluir obra</h3>
-                        <p>Tem certeza que deseja excluir esta obra? Essa ação não pode ser desfeita.</p>
-                        <div className="obra-modal-actions">
-                            <button
-                                type="button"
-                                className="obra-modal-btn obra-modal-btn--ghost"
-                                onClick={() => setIsDeleteModalOpen(false)}
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="button"
-                                className="obra-modal-btn obra-modal-btn--danger"
-                                onClick={confirmDeleteObra}
-                            >
-                                Excluir
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <DeleteObraModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={confirmDeleteObra}
+            />
 
-            {isInfoModalOpen && (
-                <div className="obra-modal-overlay" role="dialog" aria-modal="true" aria-label="Aviso">
-                    <div className="obra-modal-card">
-                        <h3>Aviso</h3>
-                        <p>{infoModalMessage}</p>
-                        <div className="obra-modal-actions">
-                            <button
-                                type="button"
-                                className="obra-modal-btn"
-                                onClick={() => setIsInfoModalOpen(false)}
-                            >
-                                Entendi
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <InfoModal
+                isOpen={isInfoModalOpen}
+                message={infoModalMessage}
+                onClose={() => setIsInfoModalOpen(false)}
+            />
 
-            {isAddMaterialModalOpen && (
-                <div className="obra-modal-overlay" role="dialog" aria-modal="true" aria-label="Adicionar material">
-                    <div className="obra-modal-card">
-                        <h3>Adicionar material</h3>
-                        <p>Preencha os dados do novo item para incluir na lista de materiais.</p>
-
-                        {addMaterialError && (
-                            <div className="obra-form-alert" role="alert">
-                                {addMaterialError}
-                            </div>
-                        )}
-
-                        <div className="obra-form-grid">
-                            <label className="obra-form-field">
-                                <span>Descrição</span>
-                                <input
-                                    type="text"
-                                    value={novoMaterial.descricao_original}
-                                    onChange={(e) => setNovoMaterial((prev) => ({ ...prev, descricao_original: e.target.value }))}
-                                    placeholder="Ex: Tubo PVC 100mm"
-                                />
-                            </label>
-
-                            <label className="obra-form-field">
-                                <span>Unidade</span>
-                                <input
-                                    type="text"
-                                    value={novoMaterial.unidade}
-                                    onChange={(e) => setNovoMaterial((prev) => ({ ...prev, unidade: e.target.value }))}
-                                    placeholder="Ex: m, un, kg"
-                                />
-                            </label>
-
-                            <label className="obra-form-field">
-                                <span>Quantidade</span>
-                                <input
-                                    type="text"
-                                    value={novoMaterial.quantidade}
-                                    onChange={(e) => setNovoMaterial((prev) => ({ ...prev, quantidade: e.target.value }))}
-                                    placeholder="Ex: 12.5"
-                                />
-                            </label>
-
-                            <label className="obra-form-field">
-                                <span>Preço unitário</span>
-                                <input
-                                    type="text"
-                                    value={novoMaterial.preco_unitario}
-                                    onChange={(e) => setNovoMaterial((prev) => ({ ...prev, preco_unitario: e.target.value }))}
-                                    placeholder="Ex: 35.90"
-                                />
-                            </label>
-                        </div>
-
-                        <div className="obra-modal-actions">
-                            <button
-                                type="button"
-                                className="obra-modal-btn obra-modal-btn--ghost"
-                                onClick={() => {
-                                    setIsAddMaterialModalOpen(false)
-                                    setAddMaterialError(null)
-                                }}
-                                disabled={salvandoMaterial}
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="button"
-                                className="obra-modal-btn"
-                                onClick={handleSalvarMaterial}
-                                disabled={salvandoMaterial}
-                            >
-                                {salvandoMaterial ? 'Salvando...' : 'Salvar material'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <AddMaterialModal
+                isOpen={isAddMaterialModalOpen}
+                salvandoMaterial={salvandoMaterial}
+                addMaterialError={addMaterialError}
+                novoMaterial={novoMaterial}
+                onChangeNovoMaterial={handleChangeNovoMaterial}
+                onClose={fecharAdicionarMaterial}
+                onSave={handleSalvarMaterial}
+            />
         </div>
     )
 } 
