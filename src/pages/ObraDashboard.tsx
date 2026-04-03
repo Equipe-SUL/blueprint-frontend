@@ -5,7 +5,6 @@ import ObraHead from '../components/obraDashboard/ObraHead'
 import ObraTabs from '../components/obraDashboard/ObraTabs'
 import MateriaisList from '../components/obraDashboard/MateriaisList'
 import ArquivosList from '../components/obraDashboard/ArquivosList'
-import DashboardLoader from '../components/obraDashboard/DashboardLoader'
 import { getProjetoById } from '../services/apiService'
 import '../styles/ObraDashboard.css'
 
@@ -27,6 +26,7 @@ export function ObraDashboard() {
     const [pesquisa, setPesquisa] = useState('')
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [reloadProjetoKey, setReloadProjetoKey] = useState(0)
 
     useEffect(() => {
         async function carregarProjeto() {
@@ -46,7 +46,7 @@ export function ObraDashboard() {
         }
 
         carregarProjeto()
-    }, [id])
+    }, [id, reloadProjetoKey])
 
     const acaoLabel = abaAtiva === 'materiais' ? 'Adicionar material' : 'Associar planta'
 
@@ -55,6 +55,9 @@ export function ObraDashboard() {
             <div className="obra-dashboard-container">
                 <ObraHead
                     projeto={projeto}
+                    loading={loading}
+                    errorMessage={error}
+                    onRetry={() => setReloadProjetoKey((prev) => prev + 1)}
                     onMenuClick={() => console.log('Abrir menu de ações da obra')}
                 />
 
@@ -66,10 +69,7 @@ export function ObraDashboard() {
                 />
 
                 <section className="obra-dashboard-content">
-                    {loading && <DashboardLoader message="Carregando dados da obra..." />}
-                    {error && <p className="obra-dashboard-feedback obra-dashboard-feedback--error">Erro: {error}</p>}
-
-                    {!loading && !error && (
+                    {!error && (
                         <div className="obra-dashboard-search-wrap">
                             <MagnifyingGlass size={18} weight="bold" className="obra-dashboard-search-icon" />
                             <input
@@ -82,18 +82,22 @@ export function ObraDashboard() {
                         </div>
                     )}
 
-                    {!loading && !error && abaAtiva === 'materiais' && (
-                        <MateriaisList
-                            projetoId={Number(id)}
-                            pesquisa={pesquisa}
-                        />
+                    {!error && (
+                        <div className={abaAtiva === 'materiais' ? '' : 'obra-dashboard-panel-hidden'}>
+                            <MateriaisList
+                                projetoId={Number(id)}
+                                pesquisa={pesquisa}
+                            />
+                        </div>
                     )}
 
-                    {!loading && !error && abaAtiva === 'arquivos' && (
-                        <ArquivosList
-                            projetoId={Number(id)}
-                            pesquisa={pesquisa}
-                        />
+                    {!error && (
+                        <div className={abaAtiva === 'arquivos' ? '' : 'obra-dashboard-panel-hidden'}>
+                            <ArquivosList
+                                projetoId={Number(id)}
+                                pesquisa={pesquisa}
+                            />
+                        </div>
                     )}
                 </section>
             </div>

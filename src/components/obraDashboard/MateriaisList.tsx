@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { API_BASE } from '../../services/apiService'
 import DashboardLoader from './DashboardLoader'
+import DashboardError from './DashboardError'
 
 type MaterialItem = {
     id: number
@@ -27,6 +28,7 @@ export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProp
     const [itens, setItens] = useState<MaterialItem[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [reloadKey, setReloadKey] = useState(0)
 
     useEffect(() => {
         async function carregarItens() {
@@ -53,7 +55,7 @@ export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProp
         }
 
         carregarItens()
-    }, [projetoId])
+    }, [projetoId, reloadKey])
 
     const itensFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
@@ -80,7 +82,13 @@ export default function MateriaisList({ projetoId, pesquisa }: MateriaisListProp
     }
 
     if (error) {
-        return <p className="obra-dashboard-feedback obra-dashboard-feedback--error">Erro: {error}</p>
+        return (
+            <DashboardError
+                title="Falha ao carregar materiais"
+                message={error}
+                onRetry={() => setReloadKey((prev) => prev + 1)}
+            />
+        )
     }
 
     if (itensFiltrados.length === 0) {

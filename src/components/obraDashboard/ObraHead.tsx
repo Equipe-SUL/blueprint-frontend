@@ -1,5 +1,7 @@
 import { DotsThreeVertical } from "phosphor-react";
 import TipoBadge from "../TipoBadge";
+import DashboardLoader from "./DashboardLoader";
+import DashboardError from "./DashboardError";
 
 type ProjetoResumo = {
     id: number
@@ -12,10 +14,39 @@ type ProjetoResumo = {
 
 type ObraHeadProps = {
     projeto: ProjetoResumo | null
+    loading?: boolean
+    errorMessage?: string | null
+    onRetry?: () => void
     onMenuClick: () => void
 }
 
-export default function ObraHead({ projeto, onMenuClick }: ObraHeadProps) {
+export default function ObraHead({
+    projeto,
+    loading = false,
+    errorMessage = null,
+    onRetry,
+    onMenuClick,
+}: ObraHeadProps) {
+    if (loading) {
+        return (
+            <header className="obra-head obra-head--loading">
+                <DashboardLoader message="Carregando informações da obra..." />
+            </header>
+        )
+    }
+
+    if (errorMessage) {
+        return (
+            <header className="obra-head obra-head--error">
+                <DashboardError
+                    title="Falha ao carregar obra"
+                    message={errorMessage}
+                    onRetry={onRetry ?? (() => {})}
+                />
+            </header>
+        )
+    }
+
     return (
         <header className="obra-head">
             {/* Informações da Obra */}

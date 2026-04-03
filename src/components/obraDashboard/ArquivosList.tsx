@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { API_BASE } from '../../services/apiService'
 import DashboardLoader from './DashboardLoader'
+import DashboardError from './DashboardError'
 
 type ArquivoItem = {
     id: number
@@ -19,6 +20,7 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
     const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [reloadKey, setReloadKey] = useState(0)
 
     useEffect(() => {
         async function carregarArquivos() {
@@ -45,7 +47,7 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
         }
 
         carregarArquivos()
-    }, [projetoId])
+    }, [projetoId, reloadKey])
 
     const arquivosFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
@@ -69,7 +71,13 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
     }
 
     if (error) {
-        return <p className="obra-dashboard-feedback obra-dashboard-feedback--error">Erro: {error}</p>
+        return (
+            <DashboardError
+                title="Falha ao carregar arquivos"
+                message={error}
+                onRetry={() => setReloadKey((prev) => prev + 1)}
+            />
+        )
     }
 
     if (arquivosFiltrados.length === 0) {

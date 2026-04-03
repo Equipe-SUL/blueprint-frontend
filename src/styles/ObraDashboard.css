@@ -30,6 +30,18 @@
 	padding: 24px;
 }
 
+.obra-head--loading {
+	justify-content: center;
+	align-items: center;
+	min-height: 240px;
+}
+
+.obra-head--error {
+	justify-content: center;
+	align-items: center;
+	min-height: 240px;
+}
+
 .obra-head-title {
 	color: #ffffff;
 	margin-bottom: 6px;
@@ -149,6 +161,53 @@
 
 .obra-dashboard-feedback--error {
 	color: #ffb4b4;
+}
+
+.dashboard-error-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 0 16px;
+}
+
+.dashboard-error-box {
+	width: 100%;
+	max-width: 520px;
+	text-align: center;
+	padding: 24px;
+	border-radius: 12px;
+	background: rgba(255, 68, 68, 0.08);
+	border: 1px solid rgba(255, 68, 68, 0.35);
+}
+
+.dashboard-error-box h3 {
+	color: #ffb4b4;
+	margin-bottom: 8px;
+}
+
+.dashboard-error-box p {
+	color: #ffdada;
+	margin-bottom: 16px;
+	word-break: break-word;
+}
+
+.dashboard-retry-btn {
+	background: #03409c;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	padding: 10px 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.dashboard-retry-btn:hover {
+	background: #00a5e6;
+}
+
+.obra-dashboard-panel-hidden {
+	display: none;
 }
 
 .obra-dashboard-loading {
