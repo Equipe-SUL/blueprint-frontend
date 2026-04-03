@@ -51,6 +51,16 @@ export async function apiRequest<T>(
         throw new Error(await readErrorBody(response))
     }
 
+    // Some successful endpoints (e.g. DELETE) return 204 with no body.
+    if (response.status === 204) {
+        return undefined as T
+    }
+
+    const contentType = response.headers.get('Content-Type') || ''
+    if (!contentType.includes('application/json')) {
+        return undefined as T
+    }
+
     return response.json() as T
 }
 
