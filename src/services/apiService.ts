@@ -24,6 +24,13 @@ export type Projeto = ProjetoCreatePayload & {
     created_at?: string
 }
 
+export type ItemProjetoCreatePayload = {
+    descricao_original: string
+    unidade: string
+    quantidade: number | string
+    preco_unitario?: number | string
+}
+
 // Leitura de Erro no body Backend
 async function readErrorBody(response: Response): Promise<string> {
     const contentType = response.headers.get('Content-Type') || ''
@@ -49,6 +56,16 @@ export async function apiRequest<T>(
 
     if (!response.ok) {
         throw new Error(await readErrorBody(response))
+    }
+
+    // Some successful endpoints (e.g. DELETE) return 204 with no body.
+    if (response.status === 204) {
+        return undefined as T
+    }
+
+    const contentType = response.headers.get('Content-Type') || ''
+    if (!contentType.includes('application/json')) {
+        return undefined as T
     }
 
     return response.json() as T
@@ -85,6 +102,17 @@ export async function getProjetoById(id: number): Promise<Projeto> {
 // Deletar um projeto
 export async function deleteProjeto(id: number): Promise<void> {
     await apiRequest(`/api/projetos/${id}/`, { method: 'DELETE' })
+}
+
+export async function createItemProjeto(
+    projetoId: number,
+    payload: ItemProjetoCreatePayload
+): Promise<unknown> {
+    return apiRequest(`/api/projetos/${projetoId}/itens/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
 }
 
 // Upload de arquivo DXF para um projeto específico

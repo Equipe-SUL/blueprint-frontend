@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getProjetos } from "../services/apiService";
 import type { Projeto, TipoProjeto } from "../services/apiService";
 import ProjectCard from "./ProjectCard.tsx";
+import DashboardLoader from "./obraDashboard/DashboardLoader";
 import "../styles/ListaObras.css";
 
 type ProjectListProps = {
@@ -13,6 +15,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
   searchTerm = "",
   tipoFilter = "",
 }) => {
+  const navigate = useNavigate();
   const [projetos, setProjetos] = useState<Projeto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,12 +71,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
   if (loading) {
     return (
       <div className="project-container list-loading-wrapper">
-        <div className="list-loader">
-          {[...Array(7)].map((_, i) => (
-            <div key={i} className="list-loader-square"></div>
-          ))}
-        </div>
-        <p className="list-loading-text">Carregando obras...</p>
+        <DashboardLoader message="Carregando obras..." />
       </div>
     );
   }
@@ -128,7 +126,7 @@ const ProjectList: React.FC<ProjectListProps> = ({
             <ProjectCard
               key={proj.id}
               projeto={proj}
-              onClick={() => console.log("Clicou:", proj.id)}
+              onClick={() => navigate(`/obras/${proj.id}`)}
             />
           ))}
         </div>
