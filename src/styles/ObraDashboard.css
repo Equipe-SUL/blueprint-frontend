@@ -1,0 +1,537 @@
+.obra-dashboard-page {
+	background-color: #0d0d0d;
+	background-image:
+		radial-gradient(circle at 10% 80%, rgba(2, 98, 128, 0.35) 0%, rgba(13, 13, 13, 0) 40%),
+		radial-gradient(circle at 90% 20%, rgba(0, 124, 140, 0.25) 0%, rgba(13, 13, 13, 0) 40%);
+	background-attachment: fixed;
+	background-size: cover;
+	min-height: 100vh;
+	width: 100%;
+	padding: 50px 20px;
+	color: #ffffff;
+}
+
+.obra-dashboard-container {
+	margin-left: 10%;
+	margin-right: 10%;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.obra-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 24px;
+	background-color: rgba(20, 20, 20, 0.95);
+	border: 1px solid #333333;
+	border-radius: 16px;
+	padding: 24px;
+}
+
+.obra-head--loading {
+	justify-content: center;
+	align-items: center;
+	min-height: 240px;
+}
+
+.obra-head--error {
+	justify-content: center;
+	align-items: center;
+	min-height: 240px;
+}
+
+.obra-head-title {
+	color: #ffffff;
+	margin-bottom: 6px;
+	font-size: 36px;
+	line-height: 1.2;
+}
+
+.obra-head-location {
+	color: #b3bbcd;
+	margin-bottom: 8px;
+}
+
+.obra-head-description {
+	color: #d5d8e1;
+	margin-bottom: 12px;
+}
+
+.obra-head-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	list-style: none;
+}
+
+.obra-head-menu-btn {
+	border: 1px solid #3f3f3f;
+	background: rgba(20, 20, 20, 0.95);
+	color: #d5d8e1;
+	width: 42px;
+	height: 42px;
+	border-radius: 10px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.obra-head-menu-btn:hover {
+	border-color: #3b82f6;
+	color: #ffffff;
+}
+
+.obra-head-actions {
+	position: relative;
+}
+
+.obra-head-dropdown {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 170px;
+	padding: 6px;
+	background: #121212;
+	border: 1px solid #333333;
+	border-radius: 10px;
+	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+	z-index: 20;
+}
+
+.obra-head-dropdown-item {
+	background: transparent;
+	border: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	text-align: left;
+	padding: 10px 12px;
+	border-radius: 8px;
+	color: #e5e7eb;
+	font-size: 14px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.obra-head-dropdown-item:hover {
+	background: rgba(59, 130, 246, 0.16);
+	color: #ffffff;
+}
+
+.obra-head-dropdown-item--danger {
+	color: #fda4af;
+}
+
+.obra-head-dropdown-item--danger:hover {
+	background: rgba(239, 68, 68, 0.2);
+	color: #fecaca;
+}
+
+.obra-tabs {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: center;
+}
+
+.obra-tabs-switch {
+	display: inline-flex;
+	background-color: rgba(20, 20, 20, 0.95);
+	border: 1px solid #333333;
+	border-radius: 12px;
+	padding: 4px;
+	gap: 4px;
+}
+
+.obra-tabs-switch button {
+	border: none;
+	background: transparent;
+	color: #b3bbcd;
+	padding: 10px 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 600;
+	transition: 0.2s;
+}
+
+.obra-tabs-switch button.active {
+	background: #03409c;
+	color: #ffffff;
+}
+
+.obra-tabs-action {
+	max-width: none;
+}
+
+.obra-dashboard-content {
+	background-color: rgba(20, 20, 20, 0.95);
+	border: 1px solid #333333;
+	border-radius: 16px;
+	padding: 18px;
+}
+
+.obra-dashboard-search-wrap {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	background: rgba(20, 20, 20, 0.95);
+	border: 1px solid #333333;
+	border-radius: 10px 20px;
+	padding: 14px 12px;
+	margin-bottom: 12px;
+}
+
+.obra-dashboard-search-icon {
+	color: #8ea2c2;
+	flex-shrink: 0;
+}
+
+.obra-dashboard-search-input {
+	width: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: #ffffff;
+	font-size: 14px;
+}
+
+.obra-dashboard-feedback {
+	color: #d5d8e1;
+	padding: 12px;
+}
+
+.obra-dashboard-feedback--error {
+	color: #ffb4b4;
+}
+
+.dashboard-error-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 0 16px;
+}
+
+.dashboard-error-box {
+	width: 100%;
+	max-width: 520px;
+	text-align: center;
+	padding: 24px;
+	border-radius: 12px;
+	background: rgba(255, 68, 68, 0.08);
+	border: 1px solid rgba(255, 68, 68, 0.35);
+}
+
+.dashboard-error-box h3 {
+	color: #ffb4b4;
+	margin-bottom: 8px;
+}
+
+.dashboard-error-box p {
+	color: #ffdada;
+	margin-bottom: 16px;
+	word-break: break-word;
+}
+
+.dashboard-retry-btn {
+	background: #03409c;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	padding: 10px 16px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.dashboard-retry-btn:hover {
+	background: #00a5e6;
+}
+
+.obra-dashboard-panel-hidden {
+	display: none;
+}
+
+.obra-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+	padding: 20px;
+}
+
+.obra-modal-card {
+	width: 100%;
+	max-width: 460px;
+	background: #151515;
+	border: 1px solid #333333;
+	border-radius: 12px;
+	padding: 20px;
+	box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.obra-modal-card h3 {
+	margin: 0 0 10px;
+	color: #ffffff;
+	font-size: 20px;
+}
+
+.obra-modal-card p {
+	margin: 0;
+	color: #d5d8e1;
+	line-height: 1.5;
+}
+
+.obra-modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.obra-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 14px;
+}
+
+.obra-form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.obra-form-field span {
+	font-size: 13px;
+	color: #b3bbcd;
+}
+
+.obra-form-field input {
+	background: #111111;
+	border: 1px solid #343434;
+	border-radius: 8px;
+	padding: 10px 12px;
+	color: #ffffff;
+	font-size: 14px;
+	outline: none;
+}
+
+.obra-form-field input:focus {
+	border-color: #3b82f6;
+}
+
+.obra-form-alert {
+	margin-top: 12px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	border: 1px solid rgba(239, 68, 68, 0.4);
+	background: rgba(239, 68, 68, 0.12);
+	color: #fecaca;
+	font-size: 14px;
+}
+
+.obra-modal-btn {
+	border: none;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	background: #03409c;
+	color: #ffffff;
+	transition: 0.2s;
+}
+
+.obra-modal-btn:hover {
+	background: #00a5e6;
+}
+
+.obra-modal-btn--ghost {
+	background: #2a2a2a;
+	color: #e5e7eb;
+}
+
+.obra-modal-btn--ghost:hover {
+	background: #3b3b3b;
+}
+
+.obra-modal-btn--danger {
+	background: #b91c1c;
+}
+
+.obra-modal-btn--danger:hover {
+	background: #dc2626;
+}
+
+.obra-dashboard-loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 220px;
+	gap: 18px;
+}
+
+.list-loader {
+	position: relative;
+	width: 96px;
+	height: 96px;
+	transform: rotate(45deg);
+}
+
+.list-loader-square {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 28px;
+	height: 28px;
+	margin: 2px;
+	background: #ffffff;
+	animation: list-square-animation 10s ease-in-out infinite both;
+}
+
+.list-loader-square:nth-of-type(1) { animation-delay: -1.4285714286s; }
+.list-loader-square:nth-of-type(2) { animation-delay: -2.8571428571s; }
+.list-loader-square:nth-of-type(3) { animation-delay: -4.2857142857s; }
+.list-loader-square:nth-of-type(4) { animation-delay: -5.7142857143s; }
+.list-loader-square:nth-of-type(5) { animation-delay: -7.1428571429s; }
+.list-loader-square:nth-of-type(6) { animation-delay: -8.5714285714s; }
+
+.list-loading-text {
+	color: #b3bbcd;
+	font-weight: 500;
+}
+
+.materiais-table-wrap {
+	width: 100%;
+	overflow-x: auto;
+	border: 1px solid #2f2f2f;
+	border-radius: 12px;
+}
+
+.materiais-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 760px;
+}
+
+.materiais-table thead th {
+	text-align: left;
+	font-size: 12px;
+	color: #8ea2c2;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	padding: 12px;
+	border-bottom: 1px solid #333333;
+}
+
+.materiais-table tbody td {
+	padding: 12px;
+	border-bottom: 1px solid #292929;
+	color: #f3f4f6;
+	font-size: 14px;
+}
+
+.materiais-table tbody tr:hover {
+	background: rgba(59, 130, 246, 0.08);
+}
+
+.materiais-total-wrap {
+	display: flex;
+	justify-content: flex-end;
+	align-items: baseline;
+	gap: 8px;
+	margin-top: 10px;
+	padding: 0 4px;
+}
+
+.materiais-total-label {
+	color: #b3bbcd;
+	font-size: 14px;
+}
+
+.materiais-total-value {
+	color: #ffffff;
+	font-size: 18px;
+}
+
+.arquivos-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.arquivo-card {
+	background: linear-gradient(145deg, #151515, #0d0d0d);
+	border-radius: 14px;
+	border: 1px solid rgba(59, 130, 246, 0.3);
+	padding: 14px;
+}
+
+.arquivo-card-title {
+	color: #ffffff;
+	font-size: 16px;
+	margin-bottom: 8px;
+}
+
+.arquivo-card-line {
+	color: #b3bbcd;
+	font-size: 13px;
+	margin-bottom: 6px;
+}
+
+@media (max-width: 1100px) {
+	.arquivos-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 900px) {
+	.obra-dashboard-container {
+		margin-left: 5%;
+		margin-right: 5%;
+	}
+
+	.obra-head {
+		flex-direction: column;
+	}
+
+	.obra-tabs {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.obra-form-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.obra-tabs-action-wrap .submit-btn {
+		width: 100%;
+		max-width: none;
+	}
+
+	.arquivos-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@keyframes list-square-animation {
+	0%, 10.5%, 100% { left: 0; top: 0; }
+	12.5%, 23% { left: 32px; top: 0; }
+	25%, 35.5% { left: 64px; top: 0; }
+	37.5%, 48% { left: 64px; top: 32px; }
+	50%, 60.5% { left: 32px; top: 32px; }
+	62.5%, 73% { left: 32px; top: 64px; }
+	75%, 85.5% { left: 0; top: 64px; }
+	87.5%, 98% { left: 0; top: 32px; }
+}
