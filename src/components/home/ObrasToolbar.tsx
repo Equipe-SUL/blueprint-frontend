@@ -40,12 +40,7 @@ export default function ObrasToolbar({
           className="obras-filter-select"
           aria-label="Filtrar por tipo de obra"
         >
-          <option value="">Todos os tipos</option>
-          <option value="hidraulica">Hidráulica</option>
-          <option value="eletrica">Elétrica</option>
           <option value="alvenaria">Alvenaria</option>
-          <option value="spda">SPDA</option>
-          <option value="combate_a_incendio">Combate a incêndio</option>
         </select>
       </div>
 

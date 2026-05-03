@@ -12,17 +12,17 @@
     padding: 50px 20px;
 }
 
-.header-section {
-    margin-left: 10%;
-    margin-right: 10%;
-    text-align: left; 
-}
-
 .header-section h1 { 
     font-size: 64px; 
     font-weight: 700; 
     margin-bottom: 32px; 
     color: #3b82f6; 
+}
+
+.header-section { 
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 3em;
 }
 
 .header-section p { 
@@ -129,6 +129,7 @@
     .obras-toolbar, .header-section, .list-title {
         margin-left: 5%;
         margin-right: 5%;
+    
     }
 
     .obras-toolbar {

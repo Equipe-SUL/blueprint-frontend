@@ -21,7 +21,7 @@
     z-index: 1;
 }
 
-.header-section { margin-bottom: 20px; text-align: left; }
+.header-section2 { margin-bottom: 20px; text-align: left; }
 .logo-group { display: flex; align-items: center; gap: 15px; }
 .logo-sq {
     background: #03409c;
@@ -269,7 +269,7 @@
 }
 
 /*header*/
-.header-section { margin-bottom: 20px; text-align: left; }
+.header-section2 { margin-bottom: 20px; text-align: left; }
 .logo-group { display: flex; align-items: center; gap: 15px; }
 .logo-sq {
     background: #03409c;

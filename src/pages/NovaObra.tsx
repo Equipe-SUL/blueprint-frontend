@@ -14,11 +14,7 @@ export function NovaObra() {
   const navigate = useNavigate();
 
   const tipoProjetoOptions: Array<{ value: TipoProjeto; label: string }> = [
-    { value: 'hidraulica', label: 'Hidraulica' },
-    { value: 'eletrica', label: 'Elétrica' },
     { value: 'alvenaria', label: 'Alvenaria' },
-    { value: 'spda', label: 'SPDA' },
-    { value: 'combate_a_incendio', label: 'Combate a incêndio' },
   ];
 
   const [dadosObra, setDadosObra] = useState({
@@ -101,7 +97,7 @@ export function NovaObra() {
     <>
     <div className="nova-obra-page">
       <div className="container-form">
-        <header className="header-section">
+        <header className="header-section2">
           <div className="logo-group">
             <div className="logo-sq"><img src="/upload.png" alt="Logo Icon" /></div>
             <div className="logo-txt">
