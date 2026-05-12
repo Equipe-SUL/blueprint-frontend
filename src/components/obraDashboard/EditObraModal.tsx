@@ -26,11 +26,10 @@ export default function EditObraModal({
 }: EditObraModalProps) {
   if (!isOpen) return null
 
-  // Lista de estados (UF)
   const estados = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
     'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
-    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
   ]
 
   return (
@@ -75,7 +74,7 @@ export default function EditObraModal({
               onChange={(e) => onChangeObraEditando('estado_obra', e.target.value)}
               disabled={salvandoObra}
             >
-              <option value="">Selecione um estado</option>
+              <option value="">Selecione...</option>
               {estados.map((uf) => (
                 <option key={uf} value={uf}>
                   {uf}
