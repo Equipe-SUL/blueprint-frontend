@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createProjeto, uploadArquivoDXF, type TipoProjeto } from '../services/apiService'
+import { createProjeto, uploadArquivoDXF } from '../services/apiService'
 import '../styles/NovaObra.css';
 import Footer from '../components/Footer';
 import Logo from '../components/Logo';
@@ -13,37 +13,12 @@ export function NovaObra() {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
-  const tipoProjetoOptions: Array<{ value: TipoProjeto; label: string }> = [
-    { value: 'alvenaria', label: 'Alvenaria' },
-  ];
-
   const [dadosObra, setDadosObra] = useState({
     nome_obra: '',
     cidade_obra: '',
     estado_obra: '',
     desc_obra: '',
-    tipo_projeto: [] as TipoProjeto[],
   });
-
-  const [tipoSelecionado, setTipoSelecionado] = useState<TipoProjeto | ''>('');
-
-  const adicionarTipo = (tipo: TipoProjeto) => {
-    setDadosObra((prev) => {
-      if (prev.tipo_projeto.includes(tipo)) return prev;
-      return { ...prev, tipo_projeto: [...prev.tipo_projeto, tipo] };
-    });
-  };
-
-  const removerTipo = (tipo: TipoProjeto) => {
-    setDadosObra((prev) => ({
-      ...prev,
-      tipo_projeto: prev.tipo_projeto.filter((t) => t !== tipo),
-    }));
-  };
-
-  const tiposSelecionadosTexto = dadosObra.tipo_projeto
-    .map((tipo) => tipoProjetoOptions.find((o) => o.value === tipo)?.label ?? tipo)
-    .join(', ');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -77,7 +52,6 @@ export function NovaObra() {
         cidade_obra: dadosObra.cidade_obra,
         estado_obra: dadosObra.estado_obra,
         desc_obra: dadosObra.desc_obra,
-        tipo_projeto: dadosObra.tipo_projeto,
       });
 
       for (const file of files) {
@@ -153,10 +127,6 @@ export function NovaObra() {
                   </div>
                   <form onSubmit={(e) => {
                     e.preventDefault();
-                    if (dadosObra.tipo_projeto.length === 0) {
-                      alert('Selecione pelo menos um tipo de obra.');
-                      return;
-                    }
                     setStep(2);
                   }}>
                     <div className="form-field">
@@ -178,47 +148,6 @@ export function NovaObra() {
                       <label>Descrição Breve *</label>
                       <input type="text" placeholder="Ex: Terraplanagem setor norte" required value={dadosObra.desc_obra} onChange={(e) => setDadosObra({...dadosObra, desc_obra: e.target.value})} />
                     </div>
-                    <div className="form-field">
-                      <label>Tipo de Obra *</label>
-                      <select
-                        aria-label="Tipo de Obra"
-                        value={tipoSelecionado}
-                        onChange={(e) => {
-                          const value = e.target.value as TipoProjeto | '';
-                          if (!value) return;
-                          adicionarTipo(value);
-                          setTipoSelecionado('');
-                        }}
-                      >
-                        <option value="">Selecione o tipo...</option>
-                        {tipoProjetoOptions.map((op) => (
-                          <option key={op.value} value={op.value}>
-                            {op.label}
-                          </option>
-                        ))}
-                      </select>
-
-                      {dadosObra.tipo_projeto.length > 0 && (
-                        <div className="tipo-chips">
-                          {dadosObra.tipo_projeto.map((tipo) => {
-                            const label = tipoProjetoOptions.find((o) => o.value === tipo)?.label ?? tipo;
-                            return (
-                              <span key={tipo} className="tipo-chip">
-                                {label}
-                                <button
-                                  type="button"
-                                  className="tipo-chip-remove"
-                                  aria-label={`Remover tipo ${label}`}
-                                  onClick={() => removerTipo(tipo)}
-                                >
-                                  ×
-                                </button>
-                              </span>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
                     <button type="submit" className="submit-btn">Próxima Etapa</button>
                   </form>
                 </div>
@@ -230,7 +159,7 @@ export function NovaObra() {
                     <p>Passo 2 de 2</p>
                   </div>
                   <p className="step-warning">
-                    Envie somente arquivos DXF dos tipos de obra selecionados: {tiposSelecionadosTexto}
+                    Envie somente arquivos DXF da obra cadastrada.
                   </p>
                   <form onSubmit={handleSubmit}>
                     <div className="form-field">

@@ -15,12 +15,12 @@ export type ProjetoCreatePayload = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: TipoProjeto[]
     taxa_bdi?: number
 }
 
 export type Projeto = ProjetoCreatePayload & {
     id: number
+    tipo_projeto?: TipoProjeto[]
     created_at?: string
 }
 
@@ -97,6 +97,15 @@ export async function getProjetos(): Promise<Projeto[]> {
 // Obter um projeto específico
 export async function getProjetoById(id: number): Promise<Projeto> {
     return apiRequest<Projeto>(`/api/projetos/${id}/`)
+}
+
+// Atualizar um projeto existente
+export async function updateProjeto(id: number, payload: Partial<ProjetoCreatePayload>): Promise<Projeto> {
+    return apiRequest<Projeto>(`/api/projetos/${id}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
 }
 
 // Deletar um projeto

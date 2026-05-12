@@ -5,13 +5,11 @@ import HomeHero from "../components/home/HomeHero";
 import ObrasSectionHeader from "../components/home/ObrasSectionHeader";
 import ObrasToolbar from "../components/home/ObrasToolbar";
 import Logo from "../components/Logo";
-import type { TipoProjeto } from "../services/apiService";
 import "../styles/Home.css";
 import "../styles/globals.css";
 
 export default function Obras() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [tipoFilter, setTipoFilter] = useState<TipoProjeto | "">("");
 
   return (
     <>
@@ -26,13 +24,11 @@ export default function Obras() {
         <ObrasToolbar
           searchTerm={searchTerm}
           onSearchTermChange={setSearchTerm}
-          tipoFilter={tipoFilter}
-          onTipoFilterChange={setTipoFilter}
           ctaLabel="Cadastrar Obra"
           ctaTo="/nova-obra"
         />
 
-        <ProjectList searchTerm={searchTerm} tipoFilter={tipoFilter} />
+        <ProjectList searchTerm={searchTerm} />
       </div>
       <Footer />
     </>

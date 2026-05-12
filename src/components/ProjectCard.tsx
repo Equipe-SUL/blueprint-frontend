@@ -8,6 +8,8 @@ type ProjectCardProps = {
 };
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ projeto, onClick }) => {
+  const tiposProjeto = Array.isArray(projeto.tipo_projeto) ? projeto.tipo_projeto : [];
+
   return (
     <div className="project-card" onClick={onClick}>
       <h3>{projeto.nome_obra}</h3>
@@ -19,7 +21,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ projeto, onClick }) => {
       <p className="descricao">{projeto.desc_obra}</p>
 
       <div className="tipo-container">
-        {projeto.tipo_projeto.map((tipo, i) => (
+        {tiposProjeto.map((tipo, i) => (
           <TipoBadge key={`${projeto.id}-${tipo}-${i}`} tipo={tipo} />
         ))}
       </div>

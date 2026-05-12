@@ -1,7 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
-import { API_BASE } from '../../services/apiService'
-import DashboardLoader from './DashboardLoader'
-import DashboardError from './DashboardError'
+import { useMemo } from 'react'
 
 type ArquivoItem = {
     id: number
@@ -16,38 +13,8 @@ type ArquivosListProps = {
     pesquisa: string
 }
 
-export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps) {
-    const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-    const [reloadKey, setReloadKey] = useState(0)
-
-    useEffect(() => {
-        async function carregarArquivos() {
-            if (!projetoId) return
-
-            setLoading(true)
-            setError(null)
-
-            try {
-                const response = await fetch(`${API_BASE}/api/projetos/${projetoId}/upload/`)
-
-                if (!response.ok) {
-                    const errorText = await response.text()
-                    throw new Error(`Erro ${response.status}: ${errorText}`)
-                }
-
-                const data: ArquivoItem[] = await response.json()
-                setArquivos(Array.isArray(data) ? data : [])
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Erro ao buscar arquivos')
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        carregarArquivos()
-    }, [projetoId, reloadKey])
+export default function ArquivosList({ pesquisa }: ArquivosListProps) {
+    const arquivos: ArquivoItem[] = []
 
     const arquivosFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
@@ -65,20 +32,6 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
             return texto.includes(termo)
         })
     }, [arquivos, pesquisa])
-
-    if (loading) {
-        return <DashboardLoader message="Carregando arquivos..." />
-    }
-
-    if (error) {
-        return (
-            <DashboardError
-                title="Falha ao carregar arquivos"
-                message={error}
-                onRetry={() => setReloadKey((prev) => prev + 1)}
-            />
-        )
-    }
 
     if (arquivosFiltrados.length === 0) {
         return <p className="obra-dashboard-feedback">Nenhum arquivo encontrado.</p>

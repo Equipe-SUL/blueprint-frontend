@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProjetos } from "../services/apiService";
-import type { Projeto, TipoProjeto } from "../services/apiService";
+import type { Projeto } from "../services/apiService";
 import ProjectCard from "./ProjectCard.tsx";
 import DashboardLoader from "./obraDashboard/DashboardLoader";
 import "../styles/ListaObras.css";
 
 type ProjectListProps = {
   searchTerm?: string;
-  tipoFilter?: TipoProjeto | "";
 };
 
 const ProjectList: React.FC<ProjectListProps> = ({
   searchTerm = "",
-  tipoFilter = "",
 }) => {
   const navigate = useNavigate();
   const [projetos, setProjetos] = useState<Projeto[]>([]);
@@ -92,23 +90,23 @@ const ProjectList: React.FC<ProjectListProps> = ({
 
   const searchNormalized = searchTerm.trim().toLowerCase();
   const projetosFiltrados = projetos.filter((proj) => {
-    const bateTipo = !tipoFilter || proj.tipo_projeto.includes(tipoFilter);
-    if (!searchNormalized) return bateTipo;
+    const tiposProjeto = Array.isArray(proj.tipo_projeto) ? proj.tipo_projeto : [];
+    if (!searchNormalized) return true;
 
     const textoBase = [
       proj.nome_obra,
       proj.cidade_obra,
       proj.estado_obra,
       proj.desc_obra,
-      proj.tipo_projeto.join(" "),
+      tiposProjeto.join(" "),
     ]
       .join(" ")
       .toLowerCase();
 
-    return bateTipo && textoBase.includes(searchNormalized);
+    return textoBase.includes(searchNormalized);
   });
 
-  const temFiltroAtivo = Boolean(searchNormalized || tipoFilter);
+  const temFiltroAtivo = Boolean(searchNormalized);
 
   return (
     <div className="project-container">

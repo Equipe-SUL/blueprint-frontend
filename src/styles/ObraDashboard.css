@@ -317,7 +317,8 @@
 	color: #b3bbcd;
 }
 
-.obra-form-field input {
+.obra-form-field input,
+.obra-form-field select {
 	background: #111111;
 	border: 1px solid #343434;
 	border-radius: 8px;
@@ -325,9 +326,12 @@
 	color: #ffffff;
 	font-size: 14px;
 	outline: none;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-.obra-form-field input:focus {
+.obra-form-field input:focus,
+.obra-form-field select:focus {
 	border-color: #3b82f6;
 }
 
