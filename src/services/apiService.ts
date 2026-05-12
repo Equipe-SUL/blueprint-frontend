@@ -15,12 +15,12 @@ export type ProjetoCreatePayload = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: TipoProjeto[]
     taxa_bdi?: number
 }
 
 export type Projeto = ProjetoCreatePayload & {
     id: number
+    tipo_projeto?: TipoProjeto[]
     created_at?: string
 }
 

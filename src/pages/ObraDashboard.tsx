@@ -20,7 +20,7 @@ type ProjetoResumo = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: string[]
+    tipo_projeto?: string[]
 }
 
 export function ObraDashboard() {

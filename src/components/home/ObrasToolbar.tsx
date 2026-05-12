@@ -1,12 +1,9 @@
 import { Link } from "react-router-dom";
-import { Plus, MagnifyingGlass, FunnelSimple } from "phosphor-react";
-import type { TipoProjeto } from "../../services/apiService";
+import { Plus, MagnifyingGlass } from "phosphor-react";
 
 type ObrasToolbarProps = {
   searchTerm: string;
   onSearchTermChange: (value: string) => void;
-  tipoFilter: TipoProjeto | "";
-  onTipoFilterChange: (value: TipoProjeto | "") => void;
   ctaLabel: string;
   ctaTo: string;
 };
@@ -14,8 +11,6 @@ type ObrasToolbarProps = {
 export default function ObrasToolbar({
   searchTerm,
   onSearchTermChange,
-  tipoFilter,
-  onTipoFilterChange,
   ctaLabel,
   ctaTo,
 }: ObrasToolbarProps) {
@@ -30,18 +25,6 @@ export default function ObrasToolbar({
           placeholder="Buscar por nome, cidade, estado ou descrição"
           className="obras-search-input"
         />
-      </div>
-
-      <div className="obras-filter-wrap">
-        <FunnelSimple size={18} weight="bold" className="obras-field-icon" />
-        <select
-          value={tipoFilter}
-          onChange={(e) => onTipoFilterChange(e.target.value as TipoProjeto | "")}
-          className="obras-filter-select"
-          aria-label="Filtrar por tipo de obra"
-        >
-          <option value="alvenaria">Alvenaria</option>
-        </select>
       </div>
 
       <Link to={ctaTo}>
