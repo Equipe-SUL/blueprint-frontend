@@ -99,6 +99,15 @@ export async function getProjetoById(id: number): Promise<Projeto> {
     return apiRequest<Projeto>(`/api/projetos/${id}/`)
 }
 
+// Atualizar um projeto existente
+export async function updateProjeto(id: number, payload: Partial<ProjetoCreatePayload>): Promise<Projeto> {
+    return apiRequest<Projeto>(`/api/projetos/${id}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+}
+
 // Deletar um projeto
 export async function deleteProjeto(id: number): Promise<void> {
     await apiRequest(`/api/projetos/${id}/`, { method: 'DELETE' })

@@ -6,9 +6,10 @@ import ObraTabs from '../components/obraDashboard/ObraTabs'
 import MateriaisList from '../components/obraDashboard/MateriaisList'
 import ArquivosList from '../components/obraDashboard/ArquivosList'
 import AddMaterialModal from '../components/obraDashboard/AddMaterialModal'
+import EditObraModal from '../components/obraDashboard/EditObraModal'
 import DeleteObraModal from '../components/obraDashboard/DeleteObraModal'
 import InfoModal from '../components/obraDashboard/InfoModal'
-import { createItemProjeto, deleteProjeto, getProjetoById } from '../services/apiService'
+import { createItemProjeto, deleteProjeto, getProjetoById, updateProjeto } from '../services/apiService'
 import '../styles/ObraDashboard.css'
 
 type AbaAtiva = 'materiais' | 'arquivos'
@@ -43,6 +44,15 @@ export function ObraDashboard() {
         unidade: '',
         quantidade: '',
         preco_unitario: '',
+    })
+    const [isEditObraModalOpen, setIsEditObraModalOpen] = useState(false)
+    const [salvandoObra, setSalvandoObra] = useState(false)
+    const [editObraError, setEditObraError] = useState<string | null>(null)
+    const [obraEditando, setObraEditando] = useState({
+        nome_obra: '',
+        cidade_obra: '',
+        estado_obra: '',
+        desc_obra: '',
     })
 
     useEffect(() => {
@@ -87,8 +97,15 @@ export function ObraDashboard() {
     }
 
     function handleEditObra() {
-        setInfoModalMessage('Funcionalidade em construção.')
-        setIsInfoModalOpen(true)
+        if (!projeto) return
+        setObraEditando({
+            nome_obra: projeto.nome_obra,
+            cidade_obra: projeto.cidade_obra,
+            estado_obra: projeto.estado_obra,
+            desc_obra: projeto.desc_obra,
+        })
+        setEditObraError(null)
+        setIsEditObraModalOpen(true)
     }
 
     function abrirAdicionarMaterial() {
@@ -100,6 +117,44 @@ export function ObraDashboard() {
         })
         setAddMaterialError(null)
         setIsAddMaterialModalOpen(true)
+    }
+
+    function handleChangeObraEditando(field: keyof typeof obraEditando, value: string) {
+        setObraEditando((prev) => ({ ...prev, [field]: value }))
+    }
+
+    function fecharEditarObra() {
+        setIsEditObraModalOpen(false)
+        setEditObraError(null)
+    }
+
+    async function handleSalvarObra() {
+        if (!id || !projeto) return
+
+        setEditObraError(null)
+
+        if (!obraEditando.nome_obra.trim() || !obraEditando.cidade_obra.trim() || !obraEditando.estado_obra.trim()) {
+            setEditObraError('Preencha nome, cidade e estado para salvar a obra.')
+            return
+        }
+
+        setSalvandoObra(true)
+        try {
+            await updateProjeto(Number(id), {
+                nome_obra: obraEditando.nome_obra.trim(),
+                cidade_obra: obraEditando.cidade_obra.trim(),
+                estado_obra: obraEditando.estado_obra.trim(),
+                desc_obra: obraEditando.desc_obra.trim(),
+            })
+
+            setIsEditObraModalOpen(false)
+            setReloadProjetoKey((prev) => prev + 1)
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Falha ao atualizar obra.'
+            setEditObraError(`Erro ao salvar obra: ${msg}`)
+        } finally {
+            setSalvandoObra(false)
+        }
     }
 
     function handleChangeNovoMaterial(field: keyof typeof novoMaterial, value: string) {
@@ -240,6 +295,16 @@ export function ObraDashboard() {
                 onChangeNovoMaterial={handleChangeNovoMaterial}
                 onClose={fecharAdicionarMaterial}
                 onSave={handleSalvarMaterial}
+            />
+
+            <EditObraModal
+                isOpen={isEditObraModalOpen}
+                salvandoObra={salvandoObra}
+                editObraError={editObraError}
+                obraEditando={obraEditando}
+                onChangeObraEditando={handleChangeObraEditando}
+                onClose={fecharEditarObra}
+                onSave={handleSalvarObra}
             />
         </div>
     )
