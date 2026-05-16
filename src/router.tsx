@@ -5,8 +5,14 @@ import Obras from './pages/Obras'
 import NotFound from './pages/NotFound'
 import { NovaObra } from './pages/NovaObra'
 import { ObraDashboard } from './pages/ObraDashboard'
+import Cadastro from './pages/Cadastro' // sem chaves
 
 export const router = createBrowserRouter([
+  {
+    // Rota pública de cadastro (fora do App para não herdar menus/layouts internos)
+    path: '/cadastro',
+    element: <Cadastro />,
+  },
   {
     element: <App />,
     errorElement: <NotFound />,
@@ -30,4 +36,3 @@ export const router = createBrowserRouter([
     ],
   },
 ])
-

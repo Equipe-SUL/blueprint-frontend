@@ -1,0 +1,438 @@
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.cadastro-root{
+  background-color: #0d0d0d;
+    background-image: 
+        radial-gradient(circle at 10% 80%, rgba(2, 98, 128, 0.35) 0%, rgba(13, 13, 13, 0) 40%),
+        radial-gradient(circle at 90% 20%, rgba(0, 124, 140, 0.25) 0%, rgba(13, 13, 13, 0) 40%);
+    background-attachment: fixed;
+    background-size: cover;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    width: 100%;
+    padding: 50px 20px;
+}
+
+
+.cadastro-root {
+  min-height: 100vh;
+  background-color: #0f1114;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+.cad-logo-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cad-logo-icon {
+  width: 48px;
+  height: 48px;
+  background: #03409c;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cad-logo-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 9px;
+  height: 9px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f1114;
+}
+
+.cad-logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.cad-logo-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.3px;
+}
+
+.cad-logo-sub {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.cad-logo-org {
+  font-size: 10px;
+  color: #64748b;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+
+.cad-tabs {
+  display: flex;
+  gap: 0;
+  background: #1a1d23;
+  border: 1px solid #2a2d35;
+  border-radius: 10px;
+  padding: 4px;
+  margin: 24px 0 0;
+  width: 100%;
+  max-width: 600px;
+}
+
+.cad-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.cad-tab:hover {
+  color: #e5e7eb;
+}
+
+.cad-tab.active {
+  background: #03409c;
+  color: #fff;
+  font-weight: 600;
+}
+
+.tab-icon {
+  flex-shrink: 0;
+}
+
+
+.cad-card-wrap {
+  width: 100%;
+  max-width: 600px;
+  padding: 16px 0 40px;
+}
+
+.cad-card {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid #333333;
+  border-radius: 16px;
+  padding: 32px;
+}
+
+
+.cad-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.cad-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.cad-card-sub {
+  font-size: 12.5px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.cad-seguro-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgb(1, 25, 49);
+  border: 1px solid rgb(42, 42, 43);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: white;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+
+.cad-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cad-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.cad-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cad-field.full {
+  width: 100%;
+}
+
+.cad-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.field-icon {
+  flex-shrink: 0;
+}
+
+.req {
+  color: #03409c;
+  margin-left: 1px;
+}
+
+.cad-input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 14px;
+  color: #e5e7eb;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cad-input::placeholder {
+  color: #404550;
+}
+
+.cad-input:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0);
+}
+
+
+.cad-input-wrap {
+  position: relative;
+}
+
+.cad-input-wrap .cad-input {
+  padding-right: 42px;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  color: #888;
+}
+
+
+.cad-select-wrap {
+  position: relative;
+}
+
+.cad-select {
+  width: 100%;
+  background: #0f1114;
+  border: 1px solid #2a2d35;
+  border-radius: 8px;
+  padding: 10px 36px 10px 14px;
+  color: #e5e7eb;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cad-select:focus {
+  border-color: #03409c;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
+}
+
+.cad-select option {
+  background: #1a1d23;
+  color: #e5e7eb;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.cad-security-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgb(1, 25, 49);
+  border: 1px solid rgb(42, 42, 43);
+  border-radius: 9px;
+  padding: 12px 14px;
+  margin-top: 2px;
+}
+
+.security-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.security-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 3px;
+}
+
+.security-text {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+
+.cad-submit-btn {
+  width: 100%;
+  background: #03409c;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 20px;
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-family: inherit;
+  transition: background 0.15s ease, transform 0.1s ease;
+  margin-top: 4px;
+}
+
+.cad-submit-btn:hover {
+  background: #03409c;
+}
+
+.cad-submit-btn:active {
+  transform: scale(0.99);
+}
+
+
+.cad-footer-note {
+  text-align: center;
+  font-size: 12px;
+  color: #4b5563;
+  margin-top: 14px;
+}
+
+.cad-link {
+  color: #03409c;
+  text-decoration: none;
+}
+
+.cad-link:hover {
+  text-decoration: underline;
+}
+
+
+@media (max-width: 560px) {
+  .cad-card {
+    border-radius: 0;
+    padding: 20px 18px;
+  }
+
+  .cad-card-wrap {
+    padding: 12px 0 32px;
+  }
+
+  .cad-tabs {
+    border-radius: 8px;
+    margin: 16px 12px 0;
+    max-width: calc(100% - 24px);
+  }
+
+  .cad-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cad-header {
+    padding: 14px 16px;
+  }
+}
+
+
+
+
+/* header */
+
+
+.header-section2 { margin-bottom: 0px; text-align: left; }
+.logo-group { display: flex; align-items: center; gap: 15px; }
+.logo-sq {
+    background: #03409c;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 25px rgba(0, 102, 255, 0.4);
+}
+.logo-sq img { width: 2em; }
+.logo-txt h1 { font-size: 32px; font-weight: 700; margin: 0; color: white;}
+.logo-txt p { font-size: 14px; color: #888888; margin: 0; }
+
+.sub-header-line { display: flex; align-items: center; gap: 10px; margin-top: 15px; font-size: 12px; color: #888888; }
+.blue-divider { width: 40px; height: 1px; background: #03409c; }
+
+
+#artbug{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
