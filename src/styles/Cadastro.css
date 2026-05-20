@@ -146,6 +146,14 @@
   padding: 32px;
 }
 
+.log-card {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid #333333;
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 16px;
+  min-width: 600px;
+}
 
 .cad-card-header {
   display: flex;
