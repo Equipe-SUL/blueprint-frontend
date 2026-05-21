@@ -113,6 +113,16 @@ export async function deleteProjeto(id: number): Promise<void> {
     await apiRequest(`/api/projetos/${id}/`, { method: 'DELETE' })
 }
 
+export async function deleteArquivoUpload(projetoId: number, arquivoId: number): Promise<void> {
+    await apiRequest(`/api/projetos/${projetoId}/upload/${arquivoId}/`, { method: 'DELETE' })
+}
+
+export async function getArquivosUpload(projetoId: number): Promise<unknown[]> {
+    // Endpoint definido no back-end: GET /api/projetos/<projeto_id>/upload/
+    return apiRequest(`/api/projetos/${projetoId}/upload/`)
+}
+
+
 export async function createItemProjeto(
     projetoId: number,
     payload: ItemProjetoCreatePayload
