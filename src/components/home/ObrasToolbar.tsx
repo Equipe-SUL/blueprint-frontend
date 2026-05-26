@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
-import { Plus, MagnifyingGlass } from "phosphor-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus, MagnifyingGlass, SignOut } from "phosphor-react";
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 type ObrasToolbarProps = {
   searchTerm: string;
@@ -14,6 +16,15 @@ export default function ObrasToolbar({
   ctaLabel,
   ctaTo,
 }: ObrasToolbarProps) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [confirming, setConfirming] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/cadastro");
+  };
+
   return (
     <div className="obras-toolbar">
       <div className="obras-search-wrap">
@@ -27,12 +38,32 @@ export default function ObrasToolbar({
         />
       </div>
 
-      <Link to={ctaTo}>
-        <button className="submit-btn">
-          <Plus size={20} weight="bold" />
-          <span>{ctaLabel}</span>
-        </button>
-      </Link>
+      <div className="obras-actions">
+        {/* Botão de logout com confirmação inline */}
+        {confirming ? (
+          <div className="logout-confirm">
+            <span>Sair do sistema?</span>
+            <button className="logout-confirm-yes" onClick={handleLogout}>
+              Sim
+            </button>
+            <button className="logout-confirm-no" onClick={() => setConfirming(false)}>
+              Não
+            </button>
+          </div>
+        ) : (
+          <button className="logout-btn" onClick={() => setConfirming(true)}>
+            <SignOut size={15} weight="bold" />
+            <span>Sair</span>
+          </button>
+        )}
+
+        <Link to={ctaTo}>
+          <button className="submit-btn">
+            <Plus size={20} weight="bold" />
+            <span>{ctaLabel}</span>
+          </button>
+        </Link>
+      </div>
     </div>
   );
 }

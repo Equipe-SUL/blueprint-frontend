@@ -1,19 +1,51 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import '../../styles/Cadastro.css';
 
+const API_URL = 'http://127.0.0.1:8000/api/users/login/';
+
 const LoginForm: React.FC = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const [showSenha, setShowSenha] = useState(false);
+  const [erro, setErro] = useState('');
   const [form, setForm] = useState({
     email: '',
     senha: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setErro(''); 
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErro('');
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: form.email,
+          password: form.senha,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.access, data.refresh); 
+        navigate('/');    
+      } else {
+        setErro('Email ou senha incorretos. Verifique suas credenciais.');
+      }
+    } catch {
+      setErro('Não foi possível conectar ao servidor. O backend está rodando?');
+    }
   };
 
     return (
@@ -45,8 +77,8 @@ const LoginForm: React.FC = () => {
                       </label>
                       <input
                         className="cad-input"
-                        type="text"
-                        name="credenciais"
+                        type="email"
+                        name="email"
                         placeholder="Ex: seuemail@eb.mil.br"
                         value={form.email}
                         onChange={handleChange}
@@ -87,6 +119,18 @@ const LoginForm: React.FC = () => {
                         </button>
                       </div>
                     </div>
+
+                    {/* mensagem de erro inline */}
+                    {erro && (
+                      <div className="cad-error-box">
+                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+                          <circle cx="7.5" cy="7.5" r="6.5" stroke="#e05252" strokeWidth="1.3"/>
+                          <path d="M7.5 4.5v3.5" stroke="#e05252" strokeWidth="1.4" strokeLinecap="round"/>
+                          <circle cx="7.5" cy="10.5" r="0.7" fill="#e05252"/>
+                        </svg>
+                        <span>{erro}</span>
+                      </div>
+                    )}
 
                     <div className="cad-security-box">
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="security-icon">
