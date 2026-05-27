@@ -39,7 +39,10 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
             setError(null)
 
             try {
-                const response = await fetch(`${API_BASE}/api/projetos/${projetoId}/itens/`)
+                const token = localStorage.getItem('access_token')
+                const response = await fetch(`${API_BASE}/api/projetos/${projetoId}/itens/`, {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                })
 
                 if (!response.ok) {
                     const errorText = await response.text()
