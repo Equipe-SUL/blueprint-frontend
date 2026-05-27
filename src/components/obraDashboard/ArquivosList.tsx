@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { apiRequest } from '../../services/apiService'
+import ProcessarArquivoModal from './ProcessarArquivoModal'
 
 type ArquivoItem = {
     id: number
@@ -18,6 +19,7 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
     const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [arquivoSelecionado, setArquivoSelecionado] = useState<ArquivoItem | null>(null)
 
     useEffect(() => {
         async function fetchArquivos() {
@@ -27,7 +29,7 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
                 const data = await apiRequest<ArquivoItem[]>(
                     `/api/projetos/${projetoId}/upload/`
                 )
-                setArquivos(data ?? [])
+                setArquivos(Array.isArray(data) ? data : [])
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Erro ao carregar arquivos')
             } finally {
@@ -70,15 +72,36 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
     }
 
     return (
-        <div className="arquivos-grid">
-            {arquivosFiltrados.map((arquivo) => (
-                <article className="arquivo-card" key={arquivo.id}>
-                    <h3 className="arquivo-card-title">{arquivo.nome_original}</h3>
-                    <p className="arquivo-card-line">Status: {arquivo.status_processamento}</p>
-                    <p className="arquivo-card-line">Tamanho: {arquivo.tamanho_mb ?? '-'} MB</p>
-                    <p className="arquivo-card-line">Enviado em: {new Date(arquivo.enviado_em).toLocaleString('pt-BR')}</p>
-                </article>
-            ))}
-        </div>
+        <>
+            <div className="arquivos-grid">
+                {arquivosFiltrados.map((arquivo) => (
+                    <article
+                        className="arquivo-card arquivo-card--clickable"
+                        key={arquivo.id}
+                        onClick={() => setArquivoSelecionado(arquivo)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                setArquivoSelecionado(arquivo)
+                            }
+                        }}
+                    >
+                        <h3 className="arquivo-card-title">{arquivo.nome_original}</h3>
+                        <p className="arquivo-card-line">Status: {arquivo.status_processamento}</p>
+                        <p className="arquivo-card-line">Tamanho: {arquivo.tamanho_mb ?? '-'} MB</p>
+                        <p className="arquivo-card-line">Enviado em: {new Date(arquivo.enviado_em).toLocaleString('pt-BR')}</p>
+                    </article>
+                ))}
+            </div>
+
+            <ProcessarArquivoModal
+                isOpen={!!arquivoSelecionado}
+                projetoId={projetoId}
+                arquivo={arquivoSelecionado}
+                onClose={() => setArquivoSelecionado(null)}
+            />
+        </>
     )
 }

@@ -539,3 +539,73 @@
 	75%, 85.5% { left: 0; top: 64px; }
 	87.5%, 98% { left: 0; top: 32px; }
 }
+
+/* Arquivo card clicável */
+.arquivo-card--clickable {
+	cursor: pointer;
+	transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.arquivo-card--clickable:hover {
+	border-color: #3b82f6;
+	background: linear-gradient(145deg, #1a1a2e, #0d0d0d);
+	transform: translateY(-2px);
+}
+
+.arquivo-card--clickable:focus-visible {
+	outline: 2px solid #3b82f6;
+	outline-offset: 2px;
+}
+
+/* Modal: nome do arquivo */
+.processar-arquivo-nome {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #e5e7eb;
+	font-size: 15px;
+	font-weight: 500;
+	margin-top: 4px;
+	padding: 10px 12px;
+	background: rgba(59, 130, 246, 0.08);
+	border: 1px solid rgba(59, 130, 246, 0.2);
+	border-radius: 8px;
+}
+
+.processar-arquivo-icon {
+	flex-shrink: 0;
+}
+
+/* Botão com loading */
+.obra-modal-btn--loading {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	opacity: 0.85;
+	cursor: not-allowed;
+}
+
+.obra-modal-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.obra-modal-btn:not(:disabled) svg {
+	margin-right: 4px;
+}
+
+/* Spinner inline */
+.btn-spinner {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #ffffff;
+	border-radius: 50%;
+	animation: btn-spin 0.7s linear infinite;
+}
+
+@keyframes btn-spin {
+	to { transform: rotate(360deg); }
+}
+

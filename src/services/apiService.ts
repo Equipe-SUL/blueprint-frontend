@@ -52,7 +52,39 @@ function getAuthHeaders(): Record<string, string> {
     return { 'Authorization': `Bearer ${token}` }
 }
 
-// Função para chamadas API
+// Tenta renovar o access_token usando o refresh_token
+async function tryRefreshToken(): Promise<boolean> {
+    const refreshToken = localStorage.getItem('refresh_token')
+    if (!refreshToken) return false
+
+    try {
+        const res = await fetch(`${API_BASE}/api/token/refresh/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: refreshToken }),
+        })
+
+        if (!res.ok) return false
+
+        const data = await res.json()
+        if (data.access) {
+            localStorage.setItem('access_token', data.access)
+            return true
+        }
+        return false
+    } catch {
+        return false
+    }
+}
+
+// Limpar tokens e redirecionar para login
+function forceLogout() {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    window.location.href = '/cadastro'
+}
+
+// Função para chamadas API (com refresh automático de token)
 export async function apiRequest<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -63,6 +95,36 @@ export async function apiRequest<T>(
         ...(options.headers as Record<string, string> | undefined),
     }
     const response = await fetch(url, { ...options, headers })
+
+    // Se 401, tentar renovar o token e refazer a request
+    if (response.status === 401) {
+        const refreshed = await tryRefreshToken()
+
+        if (refreshed) {
+            // Refazer a request com o novo token
+            const retryHeaders = {
+                ...getAuthHeaders(),
+                ...(options.headers as Record<string, string> | undefined),
+            }
+            const retryResponse = await fetch(url, { ...options, headers: retryHeaders })
+
+            if (!retryResponse.ok) {
+                if (retryResponse.status === 401) {
+                    forceLogout()
+                }
+                throw new Error(await readErrorBody(retryResponse))
+            }
+
+            if (retryResponse.status === 204) return undefined as T
+            const ct = retryResponse.headers.get('Content-Type') || ''
+            if (!ct.includes('application/json')) return undefined as T
+            return retryResponse.json() as T
+        }
+
+        // Refresh falhou — forçar logout
+        forceLogout()
+        throw new Error('Sessão expirada. Faça login novamente.')
+    }
 
     if (!response.ok) {
         throw new Error(await readErrorBody(response))
