@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { apiRequest } from '../../services/apiService'
 
 type ArquivoItem = {
     id: number
@@ -13,8 +14,31 @@ type ArquivosListProps = {
     pesquisa: string
 }
 
-export default function ArquivosList({ pesquisa }: ArquivosListProps) {
-    const arquivos: ArquivoItem[] = []
+export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps) {
+    const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        async function fetchArquivos() {
+            setLoading(true)
+            setError(null)
+            try {
+                const data = await apiRequest<ArquivoItem[]>(
+                    `/api/projetos/${projetoId}/upload/`
+                )
+                setArquivos(data ?? [])
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Erro ao carregar arquivos')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        if (projetoId) {
+            fetchArquivos()
+        }
+    }, [projetoId])
 
     const arquivosFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
@@ -32,6 +56,14 @@ export default function ArquivosList({ pesquisa }: ArquivosListProps) {
             return texto.includes(termo)
         })
     }, [arquivos, pesquisa])
+
+    if (loading) {
+        return <p className="obra-dashboard-feedback">Carregando arquivos…</p>
+    }
+
+    if (error) {
+        return <p className="obra-dashboard-feedback">Erro: {error}</p>
+    }
 
     if (arquivosFiltrados.length === 0) {
         return <p className="obra-dashboard-feedback">Nenhum arquivo encontrado.</p>
