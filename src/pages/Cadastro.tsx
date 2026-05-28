@@ -13,11 +13,7 @@ const Cadastro: React.FC = () => {
     <article id='artbug'>
       <header className="header-section2">
           <div className="logo-group">
-            <div className="logo-sq"><img src="/upload.png" alt="Logo Icon" /></div>
-            <div className="logo-txt">
-              <h1><Logo colorBluePart="#ffffff" colorPrintPart="#1e90ff" /></h1>
-              <p id='pobras'>Sistema de Gestão de Obras</p>
-            </div>
+            <Logo colorBluePart="#ffffff" colorPrintPart="#1e90ff" fontSize='2.5rem' />
           </div>
           <div className="sub-header-line">
             <span className="blue-divider"></span>
