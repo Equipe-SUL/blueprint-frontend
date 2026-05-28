@@ -113,8 +113,19 @@ export default function ProcessarArquivoModal({
             if (memorialId) {
                 const url = `${API_BASE}/api/projetos/${projetoId}/memorial/${memorialId}/pdf/`
 
-                // Buscar o PDF como blob para exibir no iframe (inclui auth)
-                const pdfResponse = await fetch(url, { headers: getHeaders() })
+                // Buscar o PDF como blob para exibir no iframe (inclui auth + refresh)
+                let pdfResponse = await fetch(url, { headers: getHeaders() })
+                if (pdfResponse.status === 401) {
+                    const refreshed = await tryRefresh()
+                    if (refreshed) {
+                        pdfResponse = await fetch(url, { headers: getHeaders() })
+                    } else {
+                        localStorage.removeItem('access_token')
+                        localStorage.removeItem('refresh_token')
+                        window.location.href = '/cadastro'
+                        throw new Error('Sessão expirada. Faça login novamente.')
+                    }
+                }
                 if (pdfResponse.ok) {
                     const blob = await pdfResponse.blob()
                     const blobUrl = window.URL.createObjectURL(blob)
