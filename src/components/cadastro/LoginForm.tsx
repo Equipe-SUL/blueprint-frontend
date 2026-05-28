@@ -82,6 +82,7 @@ const LoginForm: React.FC = () => {
                         placeholder="Ex: seuemail@eb.mil.br"
                         value={form.email}
                         onChange={handleChange}
+                        required
                       />
                     </div>
 
@@ -102,6 +103,7 @@ const LoginForm: React.FC = () => {
                           placeholder="Sua senha"
                           value={form.senha}
                           onChange={handleChange}
+                          required
                         />
                         <button type="button" className="eye-btn" onClick={() => setShowSenha(v => !v)}>
                           {showSenha ? (
