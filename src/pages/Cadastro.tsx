@@ -42,7 +42,7 @@ const Cadastro: React.FC = () => {
         </div>
         {activeTab === 'cadastro' && (
             <div className="cad-card-wrap">
-                <CadastroForm />
+                <CadastroForm onSuccess={() => setActiveTab('login')} />
             </div>
           )}
 

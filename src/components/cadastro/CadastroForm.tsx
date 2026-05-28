@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
 import '../../styles/Cadastro.css';
 
+type CadastroFormProps = {
+  onSuccess?: () => void
+}
+
+function extractErrors(data: unknown): string[] {
+  if (!data || typeof data !== 'object') return ['Erro desconhecido do servidor.']
+  const errs: string[] = []
+  for (const value of Object.values(data)) {
+    if (Array.isArray(value)) {
+      errs.push(...value.filter((v): v is string => typeof v === 'string'))
+    } else if (typeof value === 'string') {
+      errs.push(value)
+    }
+  }
+  return errs.length ? errs : ['Erro desconhecido do servidor.']
+}
+
 const patentes = [
   'Soldado', 'Cabo', 'Terceiro-Sargento', 'Segundo-Sargento', 'Primeiro-Sargento',
   'Subtenente', 'Segundo-Tenente', 'Primeiro-Tenente', 'Capitão',
@@ -12,9 +29,11 @@ const unidades = [
   '6° Batalhão de Infantaria Leve do Exército', 'Comando da 12 Brigada de Infantaria Leve Aeromovel',
 ];
 
-const CadastroForm: React.FC = () => {
+const CadastroForm: React.FC<CadastroFormProps> = ({ onSuccess }) => {
   const [showSenha, setShowSenha] = useState(false);
   const [showRepetir, setShowRepetir] = useState(false);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -33,10 +52,12 @@ const CadastroForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    setFormErrors([])
+
     // Validação básica: verificar se as senhas coincidem
     if (form.senha !== form.repetirSenha) {
-      alert("As senhas não coincidem!");
-      return;
+      setFormErrors(["As senhas não coincidem!"])
+      return
     }
 
     // Preparar o objeto para enviar ao Django (convertendo 'nome' para 'first_name')
@@ -62,29 +83,44 @@ const CadastroForm: React.FC = () => {
 
       // Tratar a resposta do backend
       if (response.ok) {
-        const data = await response.json();
-        console.log("Sucesso:", data);
-        alert("Conta criada com sucesso! Você já pode fazer o Login.");
-        
-        // Limpar o formulário após salvar com sucesso
-        setForm({
-          nome: '', email: '', telefone: '', matricula: '',
-          patente: '', unidade: '', senha: '', repetirSenha: ''
-        });
+        setFormErrors([])
+        setShowSuccessModal(true)
         
       } else {
         const errorData = await response.json();
-        console.error("Erro do backend:", errorData);
-        alert("Erro ao criar conta. Verifique os dados e tente novamente.");
+        setFormErrors(extractErrors(errorData));
       }
       
     } catch (error) {
-      console.error("Erro de conexão:", error);
-      alert("Erro ao conectar com o servidor. O backend está rodando?");
+      setFormErrors(["Erro ao conectar com o servidor. O backend está rodando?"]);
     }
   };
 
   return (
+    <>
+      {showSuccessModal && (
+        <div className="cad-modal-overlay" onClick={() => { setShowSuccessModal(false); onSuccess?.() }}>
+          <div className="cad-modal-card" onClick={e => e.stopPropagation()}>
+            <div className="cad-modal-icon-wrap">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="22" stroke="#22c55e" strokeWidth="3"/>
+                <path d="M16 24l6 6 10-10" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3>Conta criada com sucesso!</h3>
+            <p>Você já pode fazer login no sistema Blueprint com suas credenciais.</p>
+            <div className="cad-modal-actions">
+              <button
+                className="cad-submit-btn"
+                onClick={() => { setShowSuccessModal(false); onSuccess?.() }}
+                style={{marginTop: 0}}
+              >
+                Ir para Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     <div className="cad-card-wrap">
       <div className="cad-card">
         <div className="cad-card-header">
@@ -209,6 +245,22 @@ const CadastroForm: React.FC = () => {
             </div>
           </div>
 
+          {/* erros do backend */}
+          {formErrors.length > 0 && (
+            <div className="cad-error-box">
+              {formErrors.map((msg, i) => (
+                <div key={i} className="cad-error-row">
+                  <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style={{flexShrink: 0}}>
+                    <circle cx="7.5" cy="7.5" r="6.5" stroke="#e05252" strokeWidth="1.3"/>
+                    <path d="M7.5 4.5v3.5" stroke="#e05252" strokeWidth="1.4" strokeLinecap="round"/>
+                    <circle cx="7.5" cy="10.5" r="0.7" fill="#e05252"/>
+                  </svg>
+                  <span>{msg}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* senha */}
           <div className="cad-field full">
             <label className="cad-label">
@@ -310,7 +362,8 @@ const CadastroForm: React.FC = () => {
           Ao criar uma conta, você concorda com os nossos <a href="#" className="cad-link">termos de uso</a> do sistema Blueprint
         </p>
       </div>
-    </div>          
+    </div>
+    </>          
   );
 };
 
