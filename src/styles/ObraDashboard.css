@@ -590,6 +590,124 @@
 	cursor: not-allowed;
 }
 
+/* --- Arquivos (remoção) --- */
+.arquivo-card-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 8px;
+}
+
+.icon-btn {
+	border: none;
+	background: transparent;
+	padding: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	cursor: pointer;
+	color: #b3bbcd;
+	transition: 0.2s;
+}
+
+.icon-btn:hover {
+	background: rgba(59, 130, 246, 0.16);
+	color: #ffffff;
+}
+
+.arquivo-delete-btn {
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	background: rgba(239, 68, 68, 0.08);
+	color: #fecaca;
+}
+
+.arquivo-delete-btn:hover {
+	background: rgba(239, 68, 68, 0.20);
+	border-color: rgba(239, 68, 68, 0.65);
+	color: #ffffff;
+}
+
+/* --- Modal padrão (DeleteArquivoModal) --- */
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 50;
+	padding: 20px;
+}
+
+.modal-content {
+	width: 100%;
+	max-width: 460px;
+	background: #151515;
+	border: 1px solid #333333;
+	border-radius: 12px;
+	padding: 20px;
+	box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.modal-title {
+	color: #ffffff;
+	font-size: 20px;
+}
+
+.modal-body {
+	color: #d5d8e1;
+	line-height: 1.5;
+	margin-bottom: 10px;
+}
+
+.modal-error {
+	color: #fecaca;
+	background: rgba(239, 68, 68, 0.12);
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	border-radius: 8px;
+	padding: 10px 12px;
+	font-size: 14px;
+	margin-top: 8px;
+	word-break: break-word;
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.secondary-btn {
+	border: 1px solid #333333;
+	background: #2a2a2a;
+	color: #e5e7eb;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.secondary-btn:hover {
+	background: #3b3b3b;
+}
+
+.secondary-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
 .obra-modal-btn:not(:disabled) svg {
 	margin-right: 4px;
 }
@@ -777,3 +895,22 @@
 }
 
 
+.submit-btn {
+	border: none;
+	background: #03409c;
+	color: #ffffff;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.submit-btn:hover {
+	background: #00a5e6;
+}
+
+.submit-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
