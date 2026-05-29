@@ -8,6 +8,7 @@ import ArquivosList from '../components/obraDashboard/ArquivosList'
 import AddMaterialModal from '../components/obraDashboard/AddMaterialModal'
 import EditObraModal from '../components/obraDashboard/EditObraModal'
 import DeleteObraModal from '../components/obraDashboard/DeleteObraModal'
+import UploadArquivoModal from '../components/obraDashboard/UploadArquivoModal'
 import InfoModal from '../components/obraDashboard/InfoModal'
 import { createItemProjeto, deleteProjeto, getProjetoById, updateProjeto } from '../services/apiService'
 import '../styles/ObraDashboard.css'
@@ -33,6 +34,8 @@ export function ObraDashboard() {
     const [error, setError] = useState<string | null>(null)
     const [reloadProjetoKey, setReloadProjetoKey] = useState(0)
     const [refreshMateriaisKey, setRefreshMateriaisKey] = useState(0)
+    const [refreshArquivosKey, setRefreshArquivosKey] = useState(0)
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
     const [infoModalMessage, setInfoModalMessage] = useState('')
@@ -216,8 +219,7 @@ export function ObraDashboard() {
             return
         }
 
-        setInfoModalMessage('Funcionalidade de associar planta em construção.')
-        setIsInfoModalOpen(true)
+        setIsUploadModalOpen(true)
     }
 
     return (
@@ -269,6 +271,7 @@ export function ObraDashboard() {
                             <ArquivosList
                                 projetoId={Number(id)}
                                 pesquisa={pesquisa}
+                                refreshKey={refreshArquivosKey}
                             />
                         </div>
                     )}
@@ -295,6 +298,13 @@ export function ObraDashboard() {
                 onChangeNovoMaterial={handleChangeNovoMaterial}
                 onClose={fecharAdicionarMaterial}
                 onSave={handleSalvarMaterial}
+            />
+
+            <UploadArquivoModal
+                isOpen={isUploadModalOpen}
+                projetoId={Number(id)}
+                onClose={() => setIsUploadModalOpen(false)}
+                onUploaded={() => setRefreshArquivosKey((prev) => prev + 1)}
             />
 
             <EditObraModal

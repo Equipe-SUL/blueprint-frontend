@@ -866,6 +866,89 @@
 	background: #ffffff;
 }
 
+/* --- Upload modal --- */
+.upload-modal-box {
+    border: 2px dashed #333333;
+    border-radius: 12px;
+    padding: 32px 24px;
+    cursor: pointer;
+    background: rgba(26, 26, 26, 0.5);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.upload-modal-box:hover {
+    border-color: #03409c;
+    background: rgba(3, 64, 156, 0.04);
+}
+
+.upload-modal-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.upload-modal-icon {
+    font-size: 28px;
+    color: #b3bbcd;
+}
+
+.upload-modal-help {
+    font-size: 11px;
+    color: #8ea2c2;
+}
+
+.upload-modal-file-list {
+    margin-top: 12px;
+    max-height: 120px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.upload-modal-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #00ff88;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.upload-modal-file-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.upload-modal-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-modal-file-remove {
+    border: none;
+    background: transparent;
+    color: #fecaca;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.upload-modal-file-remove:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
 /* ─── Responsive ────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {

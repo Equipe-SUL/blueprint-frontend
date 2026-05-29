@@ -15,9 +15,10 @@ type ArquivoItem = {
 type ArquivosListProps = {
     projetoId: number
     pesquisa: string
+    refreshKey?: number
 }
 
-export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps) {
+export default function ArquivosList({ projetoId, pesquisa, refreshKey }: ArquivosListProps) {
     const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -48,7 +49,7 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
         }
 
         carregar()
-    }, [projetoId])
+    }, [projetoId, refreshKey])
 
     const arquivosFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
