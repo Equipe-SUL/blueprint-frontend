@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import App from './components/App'
 import Home from './pages/Home'
 import Obras from './pages/Obras'
@@ -10,12 +10,17 @@ import PrivateRoute from './components/PrivateRoute'  // <- novo
 
 export const router = createBrowserRouter([
   {
-    // Rota pública
+    // Redirecionar /cadastro antigo para /login
     path: '/cadastro',
+    element: <Navigate to="/login" replace />,
+  },
+  {
+    // Rota pública
+    path: '/login',
     element: <Cadastro />,
   },
   {
-    // App inteiro protegido: qualquer filho redireciona para /cadastro sem login
+    // App inteiro protegido: qualquer filho redireciona para /login sem login
     element: (
       <PrivateRoute>
         <App />

@@ -12,8 +12,8 @@
 }
 
 .obra-dashboard-container {
-	margin-left: 10%;
-	margin-right: 10%;
+	margin-left: 4%;
+	margin-right: 4%;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -537,6 +537,136 @@
 	display: flex;
 	align-items: center;
 	gap: 6px;
+}
+
+.materiais-actions-cell {
+	position: relative;
+	text-align: center;
+}
+
+.materiais-actions-wrapper {
+	display: inline-block;
+	position: relative;
+}
+
+.materiais-actions-btn {
+	background: none;
+	border: none;
+	color: #888;
+	cursor: pointer;
+	padding: 4px 6px;
+	border-radius: 6px;
+	transition: all 0.15s;
+}
+
+.materiais-actions-btn:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.materiais-actions-menu {
+	position: absolute;
+	right: 0;
+	top: 100%;
+	background: #1a1a1a;
+	border: 1px solid #333;
+	border-radius: 8px;
+	min-width: 140px;
+	padding: 4px 0;
+	z-index: 50;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.materiais-actions-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 8px 14px;
+	background: none;
+	border: none;
+	color: #e5e7eb;
+	font-size: 13px;
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.1s;
+}
+
+.materiais-actions-menu-item:hover {
+	background: rgba(59, 130, 246, 0.12);
+}
+
+.materiais-actions-menu-item--danger {
+	color: #e74c3c;
+}
+
+.materiais-actions-menu-item--danger:hover {
+	background: rgba(231, 76, 60, 0.12);
+}
+
+.edit-item-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.edit-item-header h3 {
+	margin: 0;
+	color: #f3f4f6;
+	font-size: 18px;
+}
+
+.edit-item-close {
+	background: none;
+	border: none;
+	color: #888;
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 6px;
+	transition: color 0.15s;
+}
+
+.edit-item-close:hover {
+	color: #fff;
+}
+
+.edit-item-body {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.edit-item-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.edit-item-field label {
+	font-size: 12px;
+	color: #b3bbcd;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.edit-item-field .cad-input:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.edit-item-hint {
+	font-size: 11px;
+	color: #60a5fa;
+	margin-top: 2px;
+}
+
+.edit-item-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
 }
 
 .arquivos-grid {

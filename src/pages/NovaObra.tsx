@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { createProjeto, uploadArquivoDXF } from '../services/apiService'
 import '../styles/NovaObra.css';
 import Footer from '../components/Footer';
-import Logo from '../components/Logo';
 
 export function NovaObra() {
   const [step, setStep] = useState(1); 
@@ -71,21 +70,7 @@ export function NovaObra() {
     <>
     <div className="nova-obra-page">
       <div className="container-form">
-        <header className="header-section2">
-          <div className="logo-group">
-            <div className="logo-sq"><img src="/upload.png" alt="Logo Icon" /></div>
-            <div className="logo-txt">
-              <h1><Logo colorBluePart="#ffffff" colorPrintPart="#1e90ff" /></h1>
-              <p id='pobras'>Sistema de Gestão de Obras</p>
-            </div>
-          </div>
-          <div className="sub-header-line">
-            <span className="blue-divider"></span>
-            <span>EXÉRCITO BRASILEIRO</span>
-          </div>
-        </header>
-
-        <main className="obra-card">
+        <main className="obra-card" style={{ marginTop: '2rem' }}>
           {loading && (
             <div className="card-content-centered">
               <div className="loader">

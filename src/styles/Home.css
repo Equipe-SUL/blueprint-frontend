@@ -20,8 +20,8 @@
 }
 
 .header-section { 
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 4%;
+    margin-right: 4%;
     margin-top: 3em;
 }
 
@@ -34,8 +34,8 @@
 .list-title {
     display: flex;
     align-items: center;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 4%;
+    margin-right: 4%;
     margin-bottom: 40px;
 }
 
@@ -149,9 +149,56 @@
   color: #fff;
 }
 
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 16px 4% 20px;
+}
+
+.stats-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.stats-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.stats-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stats-card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+}
+
+.stats-card-label {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 .obras-toolbar {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 4%;
+    margin-right: 4%;
     margin-bottom: 12px;
     display: grid;
     grid-template-columns: 1fr 240px auto;

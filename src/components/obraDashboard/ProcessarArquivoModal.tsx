@@ -68,25 +68,9 @@ async function fetchProcessar(url: string): Promise<Response> {
         }
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
-        window.location.href = '/cadastro'
-        throw new Error('Sessão expirada. Faça login novamente.')
+        window.location.href = '/login'
     }
-
     return response
-}
-
-function getProcessarUrl(tipo: TipoDocumento, projetoId: number, arquivoId: number): string {
-    if (tipo === 'memorial') {
-        return `${API_BASE}/api/projetos/${projetoId}/processar/${arquivoId}/`
-    }
-    return `${API_BASE}/api/projetos/${projetoId}/gerar-orcamento/${arquivoId}/`
-}
-
-function getPdfUrl(tipo: TipoDocumento, projetoId: number, memorialId: number): string {
-    if (tipo === 'memorial') {
-        return `${API_BASE}/api/projetos/${projetoId}/memorial/${memorialId}/pdf/`
-    }
-    return `${API_BASE}/api/projetos/${projetoId}/orcamento/${memorialId}/pdf/`
 }
 
 function getTitulo(tipo: TipoDocumento): string {
@@ -94,8 +78,10 @@ function getTitulo(tipo: TipoDocumento): string {
 }
 
 function getNomeArquivo(tipo: TipoDocumento, nomeOriginal: string): string {
-    const prefix = tipo === 'memorial' ? 'memorial_descritivo' : 'orcamento'
-    return `${prefix}_${nomeOriginal.replace(/\.[^.]+$/, '')}.pdf`
+    const base = nomeOriginal.replace(/\.dxf$/i, '')
+    return tipo === 'memorial'
+        ? `Memorial_${base}.pdf`
+        : `Orcamento_${base}.xlsx`
 }
 
 export default function ProcessarArquivoModal({
@@ -104,77 +90,64 @@ export default function ProcessarArquivoModal({
     arquivo,
     onClose,
 }: ProcessarArquivoModalProps) {
+    const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento>('memorial')
     const [processando, setProcessando] = useState(false)
     const [erro, setErro] = useState<string | null>(null)
-    const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento>('memorial')
-
     const [pdfUrl, setPdfUrl] = useState<string | null>(null)
-    const [pdfNome, setPdfNome] = useState<string>('')
-
-    if (!isOpen || !arquivo) return null
+    const [pdfNome, setPdfNome] = useState('')
 
     async function handleProcessar() {
-        setErro(null)
+        if (!arquivo) return
+
         setProcessando(true)
+        setErro(null)
+        setPdfUrl(null)
+
+        const endpoint = tipoDocumento === 'memorial'
+            ? `${API_BASE}/api/projetos/${projetoId}/processar/${arquivo.id}/`
+            : `${API_BASE}/api/projetos/${projetoId}/gerar-orcamento/${arquivo.id}/`
 
         try {
-            const url = getProcessarUrl(tipoDocumento, projetoId, arquivo!.id)
-            const response = await fetchProcessar(url)
+            const response = await fetchProcessar(endpoint)
 
             if (!response.ok) {
-                throw new Error(await readError(response))
+                const msg = await readError(response)
+                throw new Error(msg)
             }
 
             if (tipoDocumento === 'orcamento') {
-                // Orçamento: resposta é o CSV diretamente — baixar como arquivo
                 const blob = await response.blob()
-                const nomeArquivo = `orcamento_${arquivo!.nome_original.replace(/\.[^.]+$/, '')}.xlsx`
+                const url = window.URL.createObjectURL(blob)
                 const a = document.createElement('a')
-                a.href = window.URL.createObjectURL(blob)
-                a.download = nomeArquivo
+                a.href = url
+                a.download = getNomeArquivo('orcamento', arquivo.nome_original)
                 document.body.appendChild(a)
                 a.click()
                 document.body.removeChild(a)
-                window.URL.revokeObjectURL(a.href)
-                setProcessando(false)
+                window.URL.revokeObjectURL(url)
                 onClose()
                 return
             }
 
-            // Memorial: resposta é JSON com dados do PDF
             const data = await response.json()
+            const memorialId = data.memorial_db_id
 
-            if (!data.sucesso) {
-                throw new Error(data.erro || `Falha ao processar ${getTitulo(tipoDocumento).toLowerCase()}.`)
+            if (!memorialId) {
+                throw new Error('Resposta inválida do servidor.')
             }
 
-            const memorialId = data.memorial_db_id
-            if (memorialId) {
-                const pdfUrlBase = getPdfUrl(tipoDocumento, projetoId, memorialId)
+            const pdfResponse = await fetch(
+                `${API_BASE}/api/projetos/${projetoId}/memorial/${memorialId}/pdf/`,
+                { headers: getHeaders() }
+            )
 
-                let pdfResponse = await fetch(pdfUrlBase, { headers: getHeaders() })
-                if (pdfResponse.status === 401) {
-                    const refreshed = await tryRefresh()
-                    if (refreshed) {
-                        pdfResponse = await fetch(pdfUrlBase, { headers: getHeaders() })
-                    } else {
-                        localStorage.removeItem('access_token')
-                        localStorage.removeItem('refresh_token')
-                        window.location.href = '/cadastro'
-                        throw new Error('Sessão expirada. Faça login novamente.')
-                    }
-                }
-                if (pdfResponse.ok) {
-                    const blob = await pdfResponse.blob()
-                    const blobUrl = window.URL.createObjectURL(blob)
-                    const nomeArquivo = getNomeArquivo(tipoDocumento, arquivo!.nome_original)
-                    setPdfUrl(blobUrl)
-                    setPdfNome(nomeArquivo)
-                } else {
-                    throw new Error(`${getTitulo(tipoDocumento)} gerado com sucesso, mas o PDF não pôde ser carregado.`)
-                }
+            if (pdfResponse.ok) {
+                const blob = await pdfResponse.blob()
+                const blobUrl = window.URL.createObjectURL(blob)
+                setPdfUrl(blobUrl)
+                setPdfNome(getNomeArquivo('memorial', arquivo.nome_original))
             } else {
-                throw new Error(`${getTitulo(tipoDocumento)} gerado, mas sem ID para recuperar o PDF.`)
+                throw new Error('Memorial gerado, mas o PDF não pôde ser carregado.')
             }
         } catch (err) {
             setErro(err instanceof Error ? err.message : 'Falha ao processar arquivo.')
@@ -206,6 +179,8 @@ export default function ProcessarArquivoModal({
         setTipoDocumento('memorial')
         onClose()
     }
+
+    if (!isOpen) return null
 
     // ─── Estado 2: PDF Viewer ─────────────────────────────────────────
     if (pdfUrl) {

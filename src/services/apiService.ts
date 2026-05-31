@@ -53,7 +53,7 @@ function getAuthHeaders(): Record<string, string> {
 }
 
 // Tenta renovar o access_token usando o refresh_token
-async function tryRefreshToken(): Promise<boolean> {
+export async function tryRefreshToken(): Promise<boolean> {
     const refreshToken = localStorage.getItem('refresh_token')
     if (!refreshToken) return false
 
@@ -78,10 +78,10 @@ async function tryRefreshToken(): Promise<boolean> {
 }
 
 // Limpar tokens e redirecionar para login
-function forceLogout() {
+export function forceLogout() {
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
-    window.location.href = '/cadastro'
+    window.location.href = '/login'
 }
 
 // Função para chamadas API (com refresh automático de token)
@@ -203,6 +203,29 @@ export async function createItemProjeto(
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
+    })
+}
+
+// Atualizar um item de material
+export async function updateItemProjeto(
+    projetoId: number,
+    itemId: number,
+    payload: Partial<ItemProjetoCreatePayload>
+): Promise<unknown> {
+    return apiRequest(`/api/projetos/${projetoId}/itens/${itemId}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    })
+}
+
+// Excluir um item de material
+export async function deleteItemProjeto(
+    projetoId: number,
+    itemId: number,
+): Promise<void> {
+    await apiRequest(`/api/projetos/${projetoId}/itens/${itemId}/`, {
+        method: 'DELETE',
     })
 }
 

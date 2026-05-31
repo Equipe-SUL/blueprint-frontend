@@ -1,10 +1,8 @@
 import { useState } from "react";
-import Footer from "../components/Footer";
 import ProjectList from "../components/ListaObras";
-import HomeHero from "../components/home/HomeHero";
 import ObrasSectionHeader from "../components/home/ObrasSectionHeader";
 import ObrasToolbar from "../components/home/ObrasToolbar";
-import Logo from "../components/Logo";
+import StatsCards from "../components/home/StatsCards";
 import "../styles/Home.css";
 import "../styles/globals.css";
 
@@ -13,13 +11,10 @@ export default function Obras() {
 
   return (
     <>
-      <div className="home-page">
-        <HomeHero
-          title={<Logo colorBluePart="#ffffff" colorPrintPart="#1e90ff" />}
-          subtitle="Sua plataforma para cadastro e documentação de obras."
-        />
+      <div className="home-page" style={{ paddingTop: '24px' }}>
+        <ObrasSectionHeader title="Painel de Obras" />
 
-        <ObrasSectionHeader title="Obras Registradas" />
+        <StatsCards />
 
         <ObrasToolbar
           searchTerm={searchTerm}
@@ -30,7 +25,6 @@ export default function Obras() {
 
         <ProjectList searchTerm={searchTerm} />
       </div>
-      <Footer />
     </>
   );
 }
