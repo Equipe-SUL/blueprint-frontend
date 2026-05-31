@@ -206,16 +206,37 @@ export async function createItemProjeto(
     })
 }
 
+// Gerar orçamento SINAPI para um arquivo DXF
+export async function gerarOrcamento(projetoId: number, arquivoId: number): Promise<unknown> {
+    return apiRequest(`/api/projetos/${projetoId}/gerar-orcamento/${arquivoId}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+    })
+}
+
 // Upload de arquivo DXF para um projeto específico
 export async function uploadArquivoDXF(projetoId: number, file: File): Promise<unknown> {
     const formData = new FormData()
     formData.append('arquivo', file)
 
-    const res = await fetch(`${API_BASE}/api/projetos/${projetoId}/upload/`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: formData
-    })
+    const url = `${API_BASE}/api/projetos/${projetoId}/upload/`
+
+    async function doUpload(headers: Record<string, string>): Promise<Response> {
+        return fetch(url, { method: 'POST', headers, body: formData })
+    }
+
+    let res = await doUpload(getAuthHeaders())
+
+    if (res.status === 401) {
+        const refreshed = await tryRefreshToken()
+        if (refreshed) {
+            res = await doUpload(getAuthHeaders())
+        } else {
+            forceLogout()
+            throw new Error('Sessão expirada. Faça login novamente.')
+        }
+    }
 
     if (!res.ok) {
         throw new Error(await readErrorBody(res))

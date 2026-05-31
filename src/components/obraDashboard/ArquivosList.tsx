@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Trash } from 'phosphor-react'
+import { Trash, SelectionAll } from 'phosphor-react'
 import { deleteArquivoUpload, getArquivosUpload } from '../../services/apiService'
 import ProcessarArquivoModal from './ProcessarArquivoModal'
 import DeleteArquivoModal from './DeleteArquivoModal'
@@ -132,7 +132,10 @@ export default function ArquivosList({ projetoId, pesquisa, refreshKey }: Arquiv
                         }}
                     >
                         <div className="arquivo-card-head">
-                            <h3 className="arquivo-card-title">{arquivo.nome_original}</h3>
+                            <div className="arquivo-card-title-wrap">
+                                <SelectionAll size={20} weight="bold" className="arquivo-card-icon" />
+                                <h3 className="arquivo-card-title">{arquivo.nome_original}</h3>
+                            </div>
                             <button
                                 type="button"
                                 className="icon-btn arquivo-delete-btn"
@@ -145,9 +148,19 @@ export default function ArquivosList({ projetoId, pesquisa, refreshKey }: Arquiv
                                 <Trash size={20} weight="bold" />
                             </button>
                         </div>
-                        <p className="arquivo-card-line">Status: {arquivo.status_processamento}</p>
-                        <p className="arquivo-card-line">Tamanho: {arquivo.tamanho_mb ?? '-'} MB</p>
-                        <p className="arquivo-card-line">Enviado em: {new Date(arquivo.enviado_em).toLocaleString('pt-BR')}</p>
+                        <div className="arquivo-card-meta">
+                            <span className={`status-badge status-badge--${arquivo.status_processamento}`}>
+                                {arquivo.status_processamento}
+                            </span>
+                            <span className="arquivo-card-size">{arquivo.tamanho_mb ?? '-'} MB</span>
+                            <span className="arquivo-card-date">
+                                {new Date(arquivo.enviado_em).toLocaleDateString('pt-BR', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                })}
+                            </span>
+                        </div>
                     </article>
                 ))}
             </div>

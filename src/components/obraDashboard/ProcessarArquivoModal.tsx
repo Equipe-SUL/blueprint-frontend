@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FileText, CurrencyDollar } from 'phosphor-react'
 import { API_BASE } from '../../services/apiService'
 
 type ArquivoResumo = {
@@ -12,6 +13,8 @@ type ProcessarArquivoModalProps = {
     arquivo: ArquivoResumo | null
     onClose: () => void
 }
+
+type TipoDocumento = 'memorial' | 'orcamento'
 
 function getHeaders(): Record<string, string> {
     const token = localStorage.getItem('access_token')
@@ -55,7 +58,6 @@ async function readError(response: Response): Promise<string> {
     return msg
 }
 
-// Faz o POST com refresh automático de token
 async function fetchProcessar(url: string): Promise<Response> {
     const response = await fetch(url, { method: 'POST', headers: getHeaders() })
 
@@ -73,6 +75,29 @@ async function fetchProcessar(url: string): Promise<Response> {
     return response
 }
 
+function getProcessarUrl(tipo: TipoDocumento, projetoId: number, arquivoId: number): string {
+    if (tipo === 'memorial') {
+        return `${API_BASE}/api/projetos/${projetoId}/processar/${arquivoId}/`
+    }
+    return `${API_BASE}/api/projetos/${projetoId}/gerar-orcamento/${arquivoId}/`
+}
+
+function getPdfUrl(tipo: TipoDocumento, projetoId: number, memorialId: number): string {
+    if (tipo === 'memorial') {
+        return `${API_BASE}/api/projetos/${projetoId}/memorial/${memorialId}/pdf/`
+    }
+    return `${API_BASE}/api/projetos/${projetoId}/orcamento/${memorialId}/pdf/`
+}
+
+function getTitulo(tipo: TipoDocumento): string {
+    return tipo === 'memorial' ? 'Memorial Descritivo' : 'Orçamento SINAPI'
+}
+
+function getNomeArquivo(tipo: TipoDocumento, nomeOriginal: string): string {
+    const prefix = tipo === 'memorial' ? 'memorial_descritivo' : 'orcamento'
+    return `${prefix}_${nomeOriginal.replace(/\.[^.]+$/, '')}.pdf`
+}
+
 export default function ProcessarArquivoModal({
     isOpen,
     projetoId,
@@ -81,8 +106,8 @@ export default function ProcessarArquivoModal({
 }: ProcessarArquivoModalProps) {
     const [processando, setProcessando] = useState(false)
     const [erro, setErro] = useState<string | null>(null)
+    const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento>('memorial')
 
-    // Estado do PDF viewer
     const [pdfUrl, setPdfUrl] = useState<string | null>(null)
     const [pdfNome, setPdfNome] = useState<string>('')
 
@@ -93,32 +118,45 @@ export default function ProcessarArquivoModal({
         setProcessando(true)
 
         try {
-            const response = await fetchProcessar(
-                `${API_BASE}/api/projetos/${projetoId}/processar/${arquivo!.id}/`
-            )
+            const url = getProcessarUrl(tipoDocumento, projetoId, arquivo!.id)
+            const response = await fetchProcessar(url)
 
             if (!response.ok) {
                 throw new Error(await readError(response))
             }
 
-            // A resposta é JSON com os dados do processamento
+            if (tipoDocumento === 'orcamento') {
+                // Orçamento: resposta é o CSV diretamente — baixar como arquivo
+                const blob = await response.blob()
+                const nomeArquivo = `orcamento_${arquivo!.nome_original.replace(/\.[^.]+$/, '')}.xlsx`
+                const a = document.createElement('a')
+                a.href = window.URL.createObjectURL(blob)
+                a.download = nomeArquivo
+                document.body.appendChild(a)
+                a.click()
+                document.body.removeChild(a)
+                window.URL.revokeObjectURL(a.href)
+                setProcessando(false)
+                onClose()
+                return
+            }
+
+            // Memorial: resposta é JSON com dados do PDF
             const data = await response.json()
 
             if (!data.sucesso) {
-                throw new Error(data.erro || 'Falha ao processar arquivo.')
+                throw new Error(data.erro || `Falha ao processar ${getTitulo(tipoDocumento).toLowerCase()}.`)
             }
 
-            // Montar URL do PDF usando o novo endpoint
             const memorialId = data.memorial_db_id
             if (memorialId) {
-                const url = `${API_BASE}/api/projetos/${projetoId}/memorial/${memorialId}/pdf/`
+                const pdfUrlBase = getPdfUrl(tipoDocumento, projetoId, memorialId)
 
-                // Buscar o PDF como blob para exibir no iframe (inclui auth + refresh)
-                let pdfResponse = await fetch(url, { headers: getHeaders() })
+                let pdfResponse = await fetch(pdfUrlBase, { headers: getHeaders() })
                 if (pdfResponse.status === 401) {
                     const refreshed = await tryRefresh()
                     if (refreshed) {
-                        pdfResponse = await fetch(url, { headers: getHeaders() })
+                        pdfResponse = await fetch(pdfUrlBase, { headers: getHeaders() })
                     } else {
                         localStorage.removeItem('access_token')
                         localStorage.removeItem('refresh_token')
@@ -129,15 +167,14 @@ export default function ProcessarArquivoModal({
                 if (pdfResponse.ok) {
                     const blob = await pdfResponse.blob()
                     const blobUrl = window.URL.createObjectURL(blob)
-                    const nomeArquivo = `memorial_descritivo_${arquivo!.nome_original.replace(/\.[^.]+$/, '')}.pdf`
+                    const nomeArquivo = getNomeArquivo(tipoDocumento, arquivo!.nome_original)
                     setPdfUrl(blobUrl)
                     setPdfNome(nomeArquivo)
                 } else {
-                    // Fallback: mostrar mensagem de sucesso sem preview
-                    throw new Error('Memorial gerado com sucesso, mas o PDF não pôde ser carregado para exibição.')
+                    throw new Error(`${getTitulo(tipoDocumento)} gerado com sucesso, mas o PDF não pôde ser carregado.`)
                 }
             } else {
-                throw new Error('Memorial gerado, mas sem ID para recuperar o PDF.')
+                throw new Error(`${getTitulo(tipoDocumento)} gerado, mas sem ID para recuperar o PDF.`)
             }
         } catch (err) {
             setErro(err instanceof Error ? err.message : 'Falha ao processar arquivo.')
@@ -159,7 +196,6 @@ export default function ProcessarArquivoModal({
     function handleClose() {
         if (processando) return
 
-        // Limpar blob URL ao fechar
         if (pdfUrl) {
             window.URL.revokeObjectURL(pdfUrl)
             setPdfUrl(null)
@@ -167,22 +203,22 @@ export default function ProcessarArquivoModal({
         }
 
         setErro(null)
+        setTipoDocumento('memorial')
         onClose()
     }
 
-    // ─── Estado 2: PDF Viewer (modal expandido) ─────────────────────────
+    // ─── Estado 2: PDF Viewer ─────────────────────────────────────────
     if (pdfUrl) {
         return (
-            <div className="obra-modal-overlay pdf-viewer-overlay" role="dialog" aria-modal="true" aria-label="Visualizar Memorial Descritivo">
+            <div className="obra-modal-overlay pdf-viewer-overlay" role="dialog" aria-modal="true" aria-label={getTitulo(tipoDocumento)}>
                 <div className="pdf-viewer-modal">
-                    {/* Header do viewer */}
                     <div className="pdf-viewer-header">
                         <div className="pdf-viewer-title-wrap">
                             <svg width="20" height="20" viewBox="0 0 16 16" fill="none" className="pdf-viewer-icon">
                                 <path d="M4 1.5h5l4 4V13a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 13V3A1.5 1.5 0 0 1 4 1.5z" stroke="#3b82f6" strokeWidth="1.3" fill="none" />
                                 <path d="M9 1.5V5.5h4" stroke="#3b82f6" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            <h3>Memorial Descritivo</h3>
+                            <h3>{getTitulo(tipoDocumento)}</h3>
                             <span className="pdf-viewer-filename">{pdfNome}</span>
                         </div>
 
@@ -214,11 +250,10 @@ export default function ProcessarArquivoModal({
                         </div>
                     </div>
 
-                    {/* PDF iframe */}
                     <div className="pdf-viewer-body">
                         <iframe
                             src={`${pdfUrl}#toolbar=1&navpanes=0`}
-                            title="Memorial Descritivo PDF"
+                            title={getTitulo(tipoDocumento)}
                             className="pdf-viewer-iframe"
                         />
                     </div>
@@ -227,7 +262,7 @@ export default function ProcessarArquivoModal({
         )
     }
 
-    // ─── Estado 1: Antes de processar (modal padrão) ────────────────────
+    // ─── Estado 1: Antes de processar ──────────────────────────────────
     return (
         <div className="obra-modal-overlay" role="dialog" aria-modal="true" aria-label="Processar arquivo">
             <div className="obra-modal-card">
@@ -239,6 +274,30 @@ export default function ProcessarArquivoModal({
                     </svg>
                     {arquivo.nome_original}
                 </p>
+
+                {/* Seletor de tipo de documento */}
+                <div className="processar-tipo-selector">
+                    <div
+                        className={`processar-tipo-option${tipoDocumento === 'memorial' ? ' processar-tipo-option--active' : ''}`}
+                        onClick={() => !processando && setTipoDocumento('memorial')}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter') setTipoDocumento('memorial') }}
+                    >
+                        <FileText size={20} weight="bold" />
+                        Memorial Descritivo
+                    </div>
+                    <div
+                        className={`processar-tipo-option${tipoDocumento === 'orcamento' ? ' processar-tipo-option--active' : ''}`}
+                        onClick={() => !processando && setTipoDocumento('orcamento')}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter') setTipoDocumento('orcamento') }}
+                    >
+                        <CurrencyDollar size={20} weight="bold" />
+                        Orçamento SINAPI
+                    </div>
+                </div>
 
                 {erro && (
                     <div className="obra-form-alert" role="alert">
@@ -272,7 +331,7 @@ export default function ProcessarArquivoModal({
                                     <path d="M8 1v10M4 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                     <path d="M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
-                                Gerar Memorial Descritivo
+                                {tipoDocumento === 'memorial' ? 'Gerar Memorial Descritivo' : 'Gerar Orçamento SINAPI'}
                             </>
                         )}
                     </button>
