@@ -491,10 +491,16 @@
 .error-view p { color: #888; max-width: 350px; margin-bottom: 30px; }
 
 .retry-btn {
-    background: #444; /* cor neutra para o botão de tentar de novo */
+    background: #444;
     max-width: 250px;
 }
 .retry-btn:hover { background: #555; }
+
+.cancel-btn {
+    background: #2a2a2a !important;
+    border: 1px solid #444 !important;
+}
+.cancel-btn:hover { background: #3a3a3a !important; }
 
 #labelupload{
     display: flex;

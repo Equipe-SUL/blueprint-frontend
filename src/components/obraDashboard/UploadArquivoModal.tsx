@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { uploadArquivoDXF } from '../../services/apiService'
+import { useToast } from '../../context/ToastContext'
 
 type UploadArquivoModalProps = {
     isOpen: boolean
@@ -14,6 +15,7 @@ export default function UploadArquivoModal({
     onClose,
     onUploaded,
 }: UploadArquivoModalProps) {
+    const { addToast } = useToast()
     const [files, setFiles] = useState<File[]>([])
     const [uploading, setUploading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -68,11 +70,13 @@ export default function UploadArquivoModal({
             }
 
             setFiles([])
+            addToast(`${files.length} arquivo(s) enviado(s) com sucesso.`, 'success')
             onUploaded()
             onClose()
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Falha ao enviar arquivo.'
             setError(msg)
+            addToast(msg, 'error')
         } finally {
             setUploading(false)
         }

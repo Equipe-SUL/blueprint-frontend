@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FileText, CurrencyDollar } from 'phosphor-react'
 import { API_BASE } from '../../services/apiService'
+import { useToast } from '../../context/ToastContext'
 
 type ArquivoResumo = {
     id: number
@@ -90,6 +91,7 @@ export default function ProcessarArquivoModal({
     arquivo,
     onClose,
 }: ProcessarArquivoModalProps) {
+    const { addToast } = useToast()
     const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento>('memorial')
     const [processando, setProcessando] = useState(false)
     const [erro, setErro] = useState<string | null>(null)
@@ -125,6 +127,7 @@ export default function ProcessarArquivoModal({
                 a.click()
                 document.body.removeChild(a)
                 window.URL.revokeObjectURL(url)
+                addToast('Orçamento baixado com sucesso!', 'success')
                 onClose()
                 return
             }
@@ -146,11 +149,14 @@ export default function ProcessarArquivoModal({
                 const blobUrl = window.URL.createObjectURL(blob)
                 setPdfUrl(blobUrl)
                 setPdfNome(getNomeArquivo('memorial', arquivo.nome_original))
+                addToast('Memorial gerado com sucesso!', 'success')
             } else {
                 throw new Error('Memorial gerado, mas o PDF não pôde ser carregado.')
             }
         } catch (err) {
-            setErro(err instanceof Error ? err.message : 'Falha ao processar arquivo.')
+            const msg = err instanceof Error ? err.message : 'Falha ao processar arquivo.'
+            setErro(msg)
+            addToast(msg, 'error')
         } finally {
             setProcessando(false)
         }

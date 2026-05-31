@@ -45,3 +45,36 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--heading);
   color: white;
 }
+
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  animation: toast-in 0.25s ease-out;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  max-width: 380px;
+}
+
+.toast--success { background: #065f46; border: 1px solid #10b981; }
+.toast--error   { background: #7f1d1d; border: 1px solid #ef4444; }
+.toast--info    { background: #1e3a5f; border: 1px solid #3b82f6; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

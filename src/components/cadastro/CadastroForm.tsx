@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '../../context/ToastContext';
 import '../../styles/Cadastro.css';
 
 type CadastroFormProps = {
@@ -30,6 +31,7 @@ const unidades = [
 ];
 
 const CadastroForm: React.FC<CadastroFormProps> = ({ onSuccess }) => {
+  const { addToast } = useToast()
   const [showSenha, setShowSenha] = useState(false);
   const [showRepetir, setShowRepetir] = useState(false);
   const [formErrors, setFormErrors] = useState<string[]>([]);
@@ -84,6 +86,7 @@ const CadastroForm: React.FC<CadastroFormProps> = ({ onSuccess }) => {
       // Tratar a resposta do backend
       if (response.ok) {
         setFormErrors([])
+        addToast('Conta criada com sucesso!', 'success')
         setShowSuccessModal(true)
         
       } else {

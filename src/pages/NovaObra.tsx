@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProjeto, uploadArquivoDXF } from '../services/apiService'
+import { useToast } from '../context/ToastContext'
 import '../styles/NovaObra.css';
 import Footer from '../components/Footer';
 
@@ -8,6 +9,7 @@ export function NovaObra() {
   const [step, setStep] = useState(1); 
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const { addToast } = useToast()
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
@@ -58,8 +60,10 @@ export function NovaObra() {
       }
       
       setSuccess(true);
+      addToast('Obra cadastrada com sucesso!', 'success')
     } catch (err) {
       console.error(err);
+      addToast('Falha ao cadastrar obra.', 'error')
       setError(true);
     } finally {
       setLoading(false);
@@ -133,7 +137,10 @@ export function NovaObra() {
                       <label>Descrição Breve *</label>
                       <input type="text" placeholder="Ex: Terraplanagem setor norte" required value={dadosObra.desc_obra} onChange={(e) => setDadosObra({...dadosObra, desc_obra: e.target.value})} />
                     </div>
-                    <button type="submit" className="submit-btn">Próxima Etapa</button>
+                    <div className="actions-row">
+                      <button type="button" className="submit-btn cancel-btn" onClick={() => navigate('/obras')}>Cancelar</button>
+                      <button type="submit" className="submit-btn">Próxima Etapa</button>
+                    </div>
                   </form>
                 </div>
               ) : (
@@ -171,7 +178,7 @@ export function NovaObra() {
                       )}
                     </div>
                     <div className="actions-row">
-                      <button type="button" className="submit-btn retry-btn" onClick={() => setStep(1)}>Voltar</button>
+                      <button type="button" className="submit-btn cancel-btn" onClick={() => setStep(1)}>Voltar</button>
                       <button type="submit" className="submit-btn" disabled={files.length === 0}>Finalizar Cadastro</button>
                     </div>
                   </form>
@@ -182,7 +189,6 @@ export function NovaObra() {
         </main>
       </div>
     </div>
-    <Footer />
     </>
   );
 }

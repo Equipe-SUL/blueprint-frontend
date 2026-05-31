@@ -2,11 +2,13 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { SignOut } from 'phosphor-react'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
 import Logo from './Logo'
 import '../styles/Navbar.css'
 
 export default function Navbar() {
     const { user, logout } = useAuth()
+    const { addToast } = useToast()
     const navigate = useNavigate()
     const [open, setOpen] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
@@ -23,6 +25,7 @@ export default function Navbar() {
 
     function handleLogout() {
         setOpen(false)
+        addToast('Você saiu do sistema.', 'info')
         logout()
         navigate('/login')
     }

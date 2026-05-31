@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { API_BASE, exportarMateriais, updateItemProjeto, deleteItemProjeto, tryRefreshToken, forceLogout } from '../../services/apiService'
+import { useToast } from '../../context/ToastContext'
 import { ArrowsDownUp, FunnelSimple, ArrowClockwise, DownloadSimple, DotsThreeVertical, PencilSimple, Trash } from 'phosphor-react'
 import DashboardLoader from './DashboardLoader'
 import DashboardError from './DashboardError'
@@ -36,6 +37,7 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
     const [reloadKey, setReloadKey] = useState(0)
     const [sort, setSort] = useState<SortOption>('')
     const [unidadeFilter, setUnidadeFilter] = useState('')
+    const { addToast } = useToast()
     const [exporting, setExporting] = useState(false)
     const [openMenuId, setOpenMenuId] = useState<number | null>(null)
     const [editingItem, setEditingItem] = useState<MaterialItem | null>(null)
@@ -183,8 +185,9 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
         setExporting(true)
         try {
             await exportarMateriais(projetoId)
+            addToast('Planilha exportada com sucesso!', 'success')
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Erro ao exportar')
+            addToast(err instanceof Error ? err.message : 'Erro ao exportar', 'error')
         } finally {
             setExporting(false)
         }
@@ -213,15 +216,17 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
         try {
             await deleteItemProjeto(projetoId, deletingId)
             setDeletingId(null)
+            addToast('Material excluído com sucesso.', 'success')
             handleReload()
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Erro ao excluir')
+            addToast(err instanceof Error ? err.message : 'Erro ao excluir', 'error')
             setDeletingId(null)
         }
     }
 
     async function handleSaveEdit(id: number, payload: Record<string, unknown>) {
         await updateItemProjeto(projetoId, id, payload)
+        addToast('Material atualizado com sucesso.', 'success')
         handleReload()
     }
 

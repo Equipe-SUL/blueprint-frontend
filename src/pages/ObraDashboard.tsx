@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { MagnifyingGlass } from 'phosphor-react'
+import { useToast } from '../context/ToastContext'
 import ObraHead from '../components/obraDashboard/ObraHead'
 import ObraTabs from '../components/obraDashboard/ObraTabs'
 import MateriaisList from '../components/obraDashboard/MateriaisList'
@@ -27,6 +28,7 @@ type ProjetoResumo = {
 export function ObraDashboard() {
     const { id } = useParams()
     const navigate = useNavigate()
+    const { addToast } = useToast()
     const [projeto, setProjeto] = useState<ProjetoResumo | null>(null)
     const [abaAtiva, setAbaAtiva] = useState<AbaAtiva>('materiais')
     const [pesquisa, setPesquisa] = useState('')
@@ -90,10 +92,12 @@ export function ObraDashboard() {
         try {
             await deleteProjeto(Number(id))
             setIsDeleteModalOpen(false)
+            addToast('Obra excluída com sucesso.', 'success')
             navigate('/obras')
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Falha ao excluir obra.'
             setIsDeleteModalOpen(false)
+            addToast(msg, 'error')
             setInfoModalMessage(`Erro ao excluir obra: ${msg}`)
             setIsInfoModalOpen(true)
         }
@@ -151,9 +155,11 @@ export function ObraDashboard() {
             })
 
             setIsEditObraModalOpen(false)
+            addToast('Obra atualizada com sucesso.', 'success')
             setReloadProjetoKey((prev) => prev + 1)
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Falha ao atualizar obra.'
+            addToast(msg, 'error')
             setEditObraError(`Erro ao salvar obra: ${msg}`)
         } finally {
             setSalvandoObra(false)
@@ -204,9 +210,11 @@ export function ObraDashboard() {
             })
 
             setIsAddMaterialModalOpen(false)
+            addToast('Material adicionado com sucesso.', 'success')
             setRefreshMateriaisKey((prev) => prev + 1)
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Falha ao adicionar material.'
+            addToast(msg, 'error')
             setAddMaterialError(`Erro ao adicionar material: ${msg}`)
         } finally {
             setSalvandoMaterial(false)

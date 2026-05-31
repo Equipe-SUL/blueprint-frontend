@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import '../../styles/Cadastro.css';
 
 const API_URL = 'http://127.0.0.1:8000/api/users/login/';
 
 const LoginForm: React.FC = () => {
   const { login } = useAuth();
+  const { addToast } = useToast();
   const navigate = useNavigate();
 
   const [showSenha, setShowSenha] = useState(false);
@@ -38,10 +40,12 @@ const LoginForm: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
+        addToast('Login realizado com sucesso!', 'success')
         login(data.access, data.refresh); 
         navigate('/');    
       } else {
         setErro('Email ou senha incorretos. Verifique suas credenciais.');
+        addToast('Email ou senha incorretos.', 'error')
       }
     } catch {
       setErro('Não foi possível conectar ao servidor. O backend está rodando?');
