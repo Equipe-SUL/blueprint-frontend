@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { API_BASE } from '../../services/apiService'
-import { ArrowsDownUp, FunnelSimple, ArrowClockwise } from 'phosphor-react'
+import { API_BASE, exportarMateriais } from '../../services/apiService'
+import { ArrowsDownUp, FunnelSimple, ArrowClockwise, DownloadSimple } from 'phosphor-react'
 import DashboardLoader from './DashboardLoader'
 import DashboardError from './DashboardError'
 
@@ -35,6 +35,7 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
     const [reloadKey, setReloadKey] = useState(0)
     const [sort, setSort] = useState<SortOption>('')
     const [unidadeFilter, setUnidadeFilter] = useState('')
+    const [exporting, setExporting] = useState(false)
 
     useEffect(() => {
         async function carregarItens() {
@@ -146,6 +147,17 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
         setReloadKey((prev) => prev + 1)
     }
 
+    async function handleExportar() {
+        setExporting(true)
+        try {
+            await exportarMateriais(projetoId)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Erro ao exportar')
+        } finally {
+            setExporting(false)
+        }
+    }
+
     function handleSortChange(e: React.ChangeEvent<HTMLSelectElement>) {
         setSort(e.target.value as SortOption)
     }
@@ -200,14 +212,25 @@ export default function MateriaisList({ projetoId, pesquisa, externalRefreshKey 
                     )}
                 </div>
 
-                <button
-                    type="button"
-                    className="materiais-reload-btn"
-                    onClick={handleReload}
-                    title="Recarregar lista"
-                >
-                    <ArrowClockwise size={18} weight="bold" />
-                </button>
+                <div className="materiais-toolbar-right">
+                    <button
+                        type="button"
+                        className="materiais-reload-btn"
+                        onClick={handleExportar}
+                        disabled={exporting || itens.length === 0}
+                        title="Exportar planilha"
+                    >
+                        <DownloadSimple size={18} weight="bold" />
+                    </button>
+                    <button
+                        type="button"
+                        className="materiais-reload-btn"
+                        onClick={handleReload}
+                        title="Recarregar lista"
+                    >
+                        <ArrowClockwise size={18} weight="bold" />
+                    </button>
+                </div>
             </div>
 
             {itensFiltrados.length === 0 ? (

@@ -528,6 +528,17 @@
 	background: #222;
 }
 
+.materiais-reload-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.materiais-toolbar-right {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
 .arquivos-grid {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -206,6 +206,33 @@ export async function createItemProjeto(
     })
 }
 
+// Exportar materiais (ItemProjeto) como .xlsx
+export async function exportarMateriais(projetoId: number): Promise<void> {
+    const token = localStorage.getItem('access_token')
+    const res = await fetch(`${API_BASE}/api/projetos/${projetoId}/exportar-materiais/`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    })
+
+    if (!res.ok) {
+        const text = await res.text()
+        throw new Error(`Erro ${res.status}: ${text}`)
+    }
+
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+
+    const disposition = res.headers.get('Content-Disposition') || ''
+    const match = disposition.match(/filename="?(.+?)"?$/)
+    a.download = match ? match[1] : `materiais_${projetoId}.xlsx`
+
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+}
+
 // Gerar orçamento SINAPI para um arquivo DXF
 export async function gerarOrcamento(projetoId: number, arquivoId: number): Promise<unknown> {
     return apiRequest(`/api/projetos/${projetoId}/gerar-orcamento/${arquivoId}/`, {
