@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { API_BASE } from '../../services/apiService'
-import DashboardLoader from './DashboardLoader'
-import DashboardError from './DashboardError'
+import { Trash, SelectionAll } from 'phosphor-react'
+import { deleteArquivoUpload, getArquivosUpload } from '../../services/apiService'
+import ProcessarArquivoModal from './ProcessarArquivoModal'
+import DeleteArquivoModal from './DeleteArquivoModal'
 
 type ArquivoItem = {
     id: number
@@ -14,40 +15,41 @@ type ArquivoItem = {
 type ArquivosListProps = {
     projetoId: number
     pesquisa: string
+    refreshKey?: number
 }
 
-export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps) {
+export default function ArquivosList({ projetoId, pesquisa, refreshKey }: ArquivosListProps) {
     const [arquivos, setArquivos] = useState<ArquivoItem[]>([])
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [reloadKey, setReloadKey] = useState(0)
+
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [arquivoSelecionadoId, setArquivoSelecionadoId] = useState<number | null>(null)
+    const [arquivoSelecionadoNome, setArquivoSelecionadoNome] = useState('')
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [deleteError, setDeleteError] = useState<string | null>(null)
+
+    const [arquivoSelecionado, setArquivoSelecionado] = useState<ArquivoItem | null>(null)
 
     useEffect(() => {
-        async function carregarArquivos() {
+        async function carregar() {
             if (!projetoId) return
-
             setLoading(true)
             setError(null)
-
             try {
-                const response = await fetch(`${API_BASE}/api/projetos/${projetoId}/upload/`)
-
-                if (!response.ok) {
-                    const errorText = await response.text()
-                    throw new Error(`Erro ${response.status}: ${errorText}`)
-                }
-
-                const data: ArquivoItem[] = await response.json()
-                setArquivos(Array.isArray(data) ? data : [])
+                const dados = await getArquivosUpload(projetoId)
+                setArquivos(dados as ArquivoItem[])
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'Erro ao buscar arquivos')
+                const msg = err instanceof Error ? err.message : 'Erro ao carregar arquivos.'
+                setError(msg)
+                setArquivos([])
             } finally {
                 setLoading(false)
             }
         }
 
-        carregarArquivos()
-    }, [projetoId, reloadKey])
+        carregar()
+    }, [projetoId, refreshKey])
 
     const arquivosFiltrados = useMemo(() => {
         const termo = pesquisa.trim().toLowerCase()
@@ -66,18 +68,46 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
         })
     }, [arquivos, pesquisa])
 
+    async function handleOpenDeleteModal(arquivo: ArquivoItem) {
+        setDeleteError(null)
+        setArquivoSelecionadoId(arquivo.id)
+        setArquivoSelecionadoNome(arquivo.nome_original)
+        setIsDeleteModalOpen(true)
+    }
+
+    function handleCloseDeleteModal() {
+        if (isDeleting) return
+        setIsDeleteModalOpen(false)
+        setArquivoSelecionadoId(null)
+        setArquivoSelecionadoNome('')
+        setDeleteError(null)
+    }
+
+    async function handleConfirmDeleteArquivo() {
+        if (!arquivoSelecionadoId) return
+        setIsDeleting(true)
+        setDeleteError(null)
+        try {
+            await deleteArquivoUpload(projetoId, arquivoSelecionadoId)
+            setIsDeleteModalOpen(false)
+            setArquivos((prev) => prev.filter((a) => a.id !== arquivoSelecionadoId))
+            setArquivoSelecionadoId(null)
+            setArquivoSelecionadoNome('')
+            setDeleteError(null)
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Falha ao excluir arquivo.'
+            setDeleteError(msg)
+        } finally {
+            setIsDeleting(false)
+        }
+    }
+
     if (loading) {
-        return <DashboardLoader message="Carregando arquivos..." />
+        return <p className="obra-dashboard-feedback">Carregando arquivos...</p>
     }
 
     if (error) {
-        return (
-            <DashboardError
-                title="Falha ao carregar arquivos"
-                message={error}
-                onRetry={() => setReloadKey((prev) => prev + 1)}
-            />
-        )
+        return <p className="obra-dashboard-feedback">{error}</p>
     }
 
     if (arquivosFiltrados.length === 0) {
@@ -85,15 +115,71 @@ export default function ArquivosList({ projetoId, pesquisa }: ArquivosListProps)
     }
 
     return (
-        <div className="arquivos-grid">
-            {arquivosFiltrados.map((arquivo) => (
-                <article className="arquivo-card" key={arquivo.id}>
-                    <h3 className="arquivo-card-title">{arquivo.nome_original}</h3>
-                    <p className="arquivo-card-line">Status: {arquivo.status_processamento}</p>
-                    <p className="arquivo-card-line">Tamanho: {arquivo.tamanho_mb ?? '-'} MB</p>
-                    <p className="arquivo-card-line">Enviado em: {new Date(arquivo.enviado_em).toLocaleString('pt-BR')}</p>
-                </article>
-            ))}
-        </div>
+        <>
+            <div className="arquivos-grid">
+                {arquivosFiltrados.map((arquivo) => (
+                    <article
+                        className="arquivo-card arquivo-card--clickable"
+                        key={arquivo.id}
+                        onClick={() => setArquivoSelecionado(arquivo)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault()
+                                setArquivoSelecionado(arquivo)
+                            }
+                        }}
+                    >
+                        <div className="arquivo-card-head">
+                            <div className="arquivo-card-title-wrap">
+                                <SelectionAll size={20} weight="bold" className="arquivo-card-icon" />
+                                <h3 className="arquivo-card-title">{arquivo.nome_original}</h3>
+                            </div>
+                            <button
+                                type="button"
+                                className="icon-btn arquivo-delete-btn"
+                                aria-label={`Excluir ${arquivo.nome_original}`}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleOpenDeleteModal(arquivo)
+                                }}
+                            >
+                                <Trash size={20} weight="bold" />
+                            </button>
+                        </div>
+                        <div className="arquivo-card-meta">
+                            <span className={`status-badge status-badge--${arquivo.status_processamento}`}>
+                                {arquivo.status_processamento}
+                            </span>
+                            <span className="arquivo-card-size">{arquivo.tamanho_mb ?? '-'} MB</span>
+                            <span className="arquivo-card-date">
+                                {new Date(arquivo.enviado_em).toLocaleDateString('pt-BR', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                })}
+                            </span>
+                        </div>
+                    </article>
+                ))}
+            </div>
+
+            <ProcessarArquivoModal
+                isOpen={!!arquivoSelecionado}
+                projetoId={projetoId}
+                arquivo={arquivoSelecionado}
+                onClose={() => setArquivoSelecionado(null)}
+            />
+
+            <DeleteArquivoModal
+                isOpen={isDeleteModalOpen}
+                onClose={handleCloseDeleteModal}
+                onConfirm={handleConfirmDeleteArquivo}
+                arquivoNome={arquivoSelecionadoNome}
+                isDeleting={isDeleting}
+                errorMessage={deleteError}
+            />
+        </>
     )
 }

@@ -1,53 +1,25 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createProjeto, uploadArquivoDXF, type TipoProjeto } from '../services/apiService'
+import { createProjeto, uploadArquivoDXF } from '../services/apiService'
+import { useToast } from '../context/ToastContext'
 import '../styles/NovaObra.css';
 import Footer from '../components/Footer';
-import Logo from '../components/Logo';
 
 export function NovaObra() {
   const [step, setStep] = useState(1); 
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const { addToast } = useToast()
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
-
-  const tipoProjetoOptions: Array<{ value: TipoProjeto; label: string }> = [
-    { value: 'hidraulica', label: 'Hidraulica' },
-    { value: 'eletrica', label: 'Elétrica' },
-    { value: 'alvenaria', label: 'Alvenaria' },
-    { value: 'spda', label: 'SPDA' },
-    { value: 'combate_a_incendio', label: 'Combate a incêndio' },
-  ];
 
   const [dadosObra, setDadosObra] = useState({
     nome_obra: '',
     cidade_obra: '',
     estado_obra: '',
     desc_obra: '',
-    tipo_projeto: [] as TipoProjeto[],
   });
-
-  const [tipoSelecionado, setTipoSelecionado] = useState<TipoProjeto | ''>('');
-
-  const adicionarTipo = (tipo: TipoProjeto) => {
-    setDadosObra((prev) => {
-      if (prev.tipo_projeto.includes(tipo)) return prev;
-      return { ...prev, tipo_projeto: [...prev.tipo_projeto, tipo] };
-    });
-  };
-
-  const removerTipo = (tipo: TipoProjeto) => {
-    setDadosObra((prev) => ({
-      ...prev,
-      tipo_projeto: prev.tipo_projeto.filter((t) => t !== tipo),
-    }));
-  };
-
-  const tiposSelecionadosTexto = dadosObra.tipo_projeto
-    .map((tipo) => tipoProjetoOptions.find((o) => o.value === tipo)?.label ?? tipo)
-    .join(', ');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -81,7 +53,6 @@ export function NovaObra() {
         cidade_obra: dadosObra.cidade_obra,
         estado_obra: dadosObra.estado_obra,
         desc_obra: dadosObra.desc_obra,
-        tipo_projeto: dadosObra.tipo_projeto,
       });
 
       for (const file of files) {
@@ -89,8 +60,10 @@ export function NovaObra() {
       }
       
       setSuccess(true);
+      addToast('Obra cadastrada com sucesso!', 'success')
     } catch (err) {
       console.error(err);
+      addToast('Falha ao cadastrar obra.', 'error')
       setError(true);
     } finally {
       setLoading(false);
@@ -101,21 +74,7 @@ export function NovaObra() {
     <>
     <div className="nova-obra-page">
       <div className="container-form">
-        <header className="header-section">
-          <div className="logo-group">
-            <div className="logo-sq"><img src="/upload.png" alt="Logo Icon" /></div>
-            <div className="logo-txt">
-              <h1><Logo colorBluePart="#ffffff" colorPrintPart="#1e90ff" /></h1>
-              <p id='pobras'>Sistema de Gestão de Obras</p>
-            </div>
-          </div>
-          <div className="sub-header-line">
-            <span className="blue-divider"></span>
-            <span>EXÉRCITO BRASILEIRO</span>
-          </div>
-        </header>
-
-        <main className="obra-card">
+        <main className="obra-card" style={{ marginTop: '2rem' }}>
           {loading && (
             <div className="card-content-centered">
               <div className="loader">
@@ -157,10 +116,6 @@ export function NovaObra() {
                   </div>
                   <form onSubmit={(e) => {
                     e.preventDefault();
-                    if (dadosObra.tipo_projeto.length === 0) {
-                      alert('Selecione pelo menos um tipo de obra.');
-                      return;
-                    }
                     setStep(2);
                   }}>
                     <div className="form-field">
@@ -182,48 +137,10 @@ export function NovaObra() {
                       <label>Descrição Breve *</label>
                       <input type="text" placeholder="Ex: Terraplanagem setor norte" required value={dadosObra.desc_obra} onChange={(e) => setDadosObra({...dadosObra, desc_obra: e.target.value})} />
                     </div>
-                    <div className="form-field">
-                      <label>Tipo de Obra *</label>
-                      <select
-                        aria-label="Tipo de Obra"
-                        value={tipoSelecionado}
-                        onChange={(e) => {
-                          const value = e.target.value as TipoProjeto | '';
-                          if (!value) return;
-                          adicionarTipo(value);
-                          setTipoSelecionado('');
-                        }}
-                      >
-                        <option value="">Selecione o tipo...</option>
-                        {tipoProjetoOptions.map((op) => (
-                          <option key={op.value} value={op.value}>
-                            {op.label}
-                          </option>
-                        ))}
-                      </select>
-
-                      {dadosObra.tipo_projeto.length > 0 && (
-                        <div className="tipo-chips">
-                          {dadosObra.tipo_projeto.map((tipo) => {
-                            const label = tipoProjetoOptions.find((o) => o.value === tipo)?.label ?? tipo;
-                            return (
-                              <span key={tipo} className="tipo-chip">
-                                {label}
-                                <button
-                                  type="button"
-                                  className="tipo-chip-remove"
-                                  aria-label={`Remover tipo ${label}`}
-                                  onClick={() => removerTipo(tipo)}
-                                >
-                                  ×
-                                </button>
-                              </span>
-                            );
-                          })}
-                        </div>
-                      )}
+                    <div className="actions-row">
+                      <button type="button" className="submit-btn cancel-btn" onClick={() => navigate('/obras')}>Cancelar</button>
+                      <button type="submit" className="submit-btn">Próxima Etapa</button>
                     </div>
-                    <button type="submit" className="submit-btn">Próxima Etapa</button>
                   </form>
                 </div>
               ) : (
@@ -234,7 +151,7 @@ export function NovaObra() {
                     <p>Passo 2 de 2</p>
                   </div>
                   <p className="step-warning">
-                    Envie somente arquivos DXF dos tipos de obra selecionados: {tiposSelecionadosTexto}
+                    Envie somente arquivos DXF da obra cadastrada.
                   </p>
                   <form onSubmit={handleSubmit}>
                     <div className="form-field">
@@ -261,7 +178,7 @@ export function NovaObra() {
                       )}
                     </div>
                     <div className="actions-row">
-                      <button type="button" className="submit-btn retry-btn" onClick={() => setStep(1)}>Voltar</button>
+                      <button type="button" className="submit-btn cancel-btn" onClick={() => setStep(1)}>Voltar</button>
                       <button type="submit" className="submit-btn" disabled={files.length === 0}>Finalizar Cadastro</button>
                     </div>
                   </form>
@@ -272,7 +189,6 @@ export function NovaObra() {
         </main>
       </div>
     </div>
-    <Footer />
     </>
   );
 }

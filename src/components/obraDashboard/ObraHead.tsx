@@ -10,7 +10,7 @@ type ProjetoResumo = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: string[]
+    tipo_projeto?: string[]
 }
 
 type ObraHeadProps = {
@@ -34,6 +34,7 @@ export default function ObraHead({
 }: ObraHeadProps) {
     const [menuOpen, setMenuOpen] = useState(false)
     const menuRef = useRef<HTMLDivElement | null>(null)
+    const tiposProjeto = Array.isArray(projeto?.tipo_projeto) ? projeto.tipo_projeto : []
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -78,7 +79,7 @@ export default function ObraHead({
                     {projeto?.desc_obra}
                 </p>
                 <ul className="obra-head-tags">
-                    {projeto?.tipo_projeto.map((tipo, index) => (
+                    {tiposProjeto.map((tipo, index) => (
                         <li key={`${tipo}-${index}`}>
                             <TipoBadge tipo={tipo} />
                         </li>

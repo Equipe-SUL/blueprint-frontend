@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { MagnifyingGlass } from 'phosphor-react'
+import { useToast } from '../context/ToastContext'
 import ObraHead from '../components/obraDashboard/ObraHead'
 import ObraTabs from '../components/obraDashboard/ObraTabs'
 import MateriaisList from '../components/obraDashboard/MateriaisList'
 import ArquivosList from '../components/obraDashboard/ArquivosList'
 import AddMaterialModal from '../components/obraDashboard/AddMaterialModal'
+import EditObraModal from '../components/obraDashboard/EditObraModal'
 import DeleteObraModal from '../components/obraDashboard/DeleteObraModal'
+import UploadArquivoModal from '../components/obraDashboard/UploadArquivoModal'
 import InfoModal from '../components/obraDashboard/InfoModal'
-import { createItemProjeto, deleteProjeto, getProjetoById } from '../services/apiService'
+import { createItemProjeto, deleteProjeto, getProjetoById, updateProjeto } from '../services/apiService'
 import '../styles/ObraDashboard.css'
 
 type AbaAtiva = 'materiais' | 'arquivos'
@@ -19,12 +22,13 @@ type ProjetoResumo = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: string[]
+    tipo_projeto?: string[]
 }
 
 export function ObraDashboard() {
     const { id } = useParams()
     const navigate = useNavigate()
+    const { addToast } = useToast()
     const [projeto, setProjeto] = useState<ProjetoResumo | null>(null)
     const [abaAtiva, setAbaAtiva] = useState<AbaAtiva>('materiais')
     const [pesquisa, setPesquisa] = useState('')
@@ -32,6 +36,8 @@ export function ObraDashboard() {
     const [error, setError] = useState<string | null>(null)
     const [reloadProjetoKey, setReloadProjetoKey] = useState(0)
     const [refreshMateriaisKey, setRefreshMateriaisKey] = useState(0)
+    const [refreshArquivosKey, setRefreshArquivosKey] = useState(0)
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
     const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
     const [infoModalMessage, setInfoModalMessage] = useState('')
@@ -43,6 +49,15 @@ export function ObraDashboard() {
         unidade: '',
         quantidade: '',
         preco_unitario: '',
+    })
+    const [isEditObraModalOpen, setIsEditObraModalOpen] = useState(false)
+    const [salvandoObra, setSalvandoObra] = useState(false)
+    const [editObraError, setEditObraError] = useState<string | null>(null)
+    const [obraEditando, setObraEditando] = useState({
+        nome_obra: '',
+        cidade_obra: '',
+        estado_obra: '',
+        desc_obra: '',
     })
 
     useEffect(() => {
@@ -77,18 +92,27 @@ export function ObraDashboard() {
         try {
             await deleteProjeto(Number(id))
             setIsDeleteModalOpen(false)
+            addToast('Obra excluída com sucesso.', 'success')
             navigate('/obras')
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Falha ao excluir obra.'
             setIsDeleteModalOpen(false)
+            addToast(msg, 'error')
             setInfoModalMessage(`Erro ao excluir obra: ${msg}`)
             setIsInfoModalOpen(true)
         }
     }
 
     function handleEditObra() {
-        setInfoModalMessage('Funcionalidade em construção.')
-        setIsInfoModalOpen(true)
+        if (!projeto) return
+        setObraEditando({
+            nome_obra: projeto.nome_obra,
+            cidade_obra: projeto.cidade_obra,
+            estado_obra: projeto.estado_obra,
+            desc_obra: projeto.desc_obra,
+        })
+        setEditObraError(null)
+        setIsEditObraModalOpen(true)
     }
 
     function abrirAdicionarMaterial() {
@@ -100,6 +124,46 @@ export function ObraDashboard() {
         })
         setAddMaterialError(null)
         setIsAddMaterialModalOpen(true)
+    }
+
+    function handleChangeObraEditando(field: keyof typeof obraEditando, value: string) {
+        setObraEditando((prev) => ({ ...prev, [field]: value }))
+    }
+
+    function fecharEditarObra() {
+        setIsEditObraModalOpen(false)
+        setEditObraError(null)
+    }
+
+    async function handleSalvarObra() {
+        if (!id || !projeto) return
+
+        setEditObraError(null)
+
+        if (!obraEditando.nome_obra.trim() || !obraEditando.cidade_obra.trim() || !obraEditando.estado_obra.trim()) {
+            setEditObraError('Preencha nome, cidade e estado para salvar a obra.')
+            return
+        }
+
+        setSalvandoObra(true)
+        try {
+            await updateProjeto(Number(id), {
+                nome_obra: obraEditando.nome_obra.trim(),
+                cidade_obra: obraEditando.cidade_obra.trim(),
+                estado_obra: obraEditando.estado_obra.trim(),
+                desc_obra: obraEditando.desc_obra.trim(),
+            })
+
+            setIsEditObraModalOpen(false)
+            addToast('Obra atualizada com sucesso.', 'success')
+            setReloadProjetoKey((prev) => prev + 1)
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Falha ao atualizar obra.'
+            addToast(msg, 'error')
+            setEditObraError(`Erro ao salvar obra: ${msg}`)
+        } finally {
+            setSalvandoObra(false)
+        }
     }
 
     function handleChangeNovoMaterial(field: keyof typeof novoMaterial, value: string) {
@@ -146,9 +210,11 @@ export function ObraDashboard() {
             })
 
             setIsAddMaterialModalOpen(false)
+            addToast('Material adicionado com sucesso.', 'success')
             setRefreshMateriaisKey((prev) => prev + 1)
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Falha ao adicionar material.'
+            addToast(msg, 'error')
             setAddMaterialError(`Erro ao adicionar material: ${msg}`)
         } finally {
             setSalvandoMaterial(false)
@@ -161,8 +227,7 @@ export function ObraDashboard() {
             return
         }
 
-        setInfoModalMessage('Funcionalidade de associar planta em construção.')
-        setIsInfoModalOpen(true)
+        setIsUploadModalOpen(true)
     }
 
     return (
@@ -214,6 +279,7 @@ export function ObraDashboard() {
                             <ArquivosList
                                 projetoId={Number(id)}
                                 pesquisa={pesquisa}
+                                refreshKey={refreshArquivosKey}
                             />
                         </div>
                     )}
@@ -240,6 +306,23 @@ export function ObraDashboard() {
                 onChangeNovoMaterial={handleChangeNovoMaterial}
                 onClose={fecharAdicionarMaterial}
                 onSave={handleSalvarMaterial}
+            />
+
+            <UploadArquivoModal
+                isOpen={isUploadModalOpen}
+                projetoId={Number(id)}
+                onClose={() => setIsUploadModalOpen(false)}
+                onUploaded={() => setRefreshArquivosKey((prev) => prev + 1)}
+            />
+
+            <EditObraModal
+                isOpen={isEditObraModalOpen}
+                salvandoObra={salvandoObra}
+                editObraError={editObraError}
+                obraEditando={obraEditando}
+                onChangeObraEditando={handleChangeObraEditando}
+                onClose={fecharEditarObra}
+                onSave={handleSalvarObra}
             />
         </div>
     )

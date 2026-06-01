@@ -15,12 +15,12 @@ export type ProjetoCreatePayload = {
     cidade_obra: string
     estado_obra: string
     desc_obra: string
-    tipo_projeto: TipoProjeto[]
     taxa_bdi?: number
 }
 
 export type Projeto = ProjetoCreatePayload & {
     id: number
+    tipo_projeto?: TipoProjeto[]
     created_at?: string
 }
 
@@ -46,13 +46,85 @@ async function readErrorBody(response: Response): Promise<string> {
     }
 }
 
-// Função para chamadas API
+function getAuthHeaders(): Record<string, string> {
+    const token = localStorage.getItem('access_token')
+    if (!token) return {}
+    return { 'Authorization': `Bearer ${token}` }
+}
+
+// Tenta renovar o access_token usando o refresh_token
+export async function tryRefreshToken(): Promise<boolean> {
+    const refreshToken = localStorage.getItem('refresh_token')
+    if (!refreshToken) return false
+
+    try {
+        const res = await fetch(`${API_BASE}/api/users/token/refresh/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh: refreshToken }),
+        })
+
+        if (!res.ok) return false
+
+        const data = await res.json()
+        if (data.access) {
+            localStorage.setItem('access_token', data.access)
+            return true
+        }
+        return false
+    } catch {
+        return false
+    }
+}
+
+// Limpar tokens e redirecionar para login
+export function forceLogout() {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    window.location.href = '/login'
+}
+
+// Função para chamadas API (com refresh automático de token)
 export async function apiRequest<T>(
     endpoint: string,
     options: RequestInit = {}
 ): Promise<T> {
     const url = `${API_BASE}${endpoint}`
-    const response = await fetch(url, options)
+    const headers = {
+        ...getAuthHeaders(),
+        ...(options.headers as Record<string, string> | undefined),
+    }
+    const response = await fetch(url, { ...options, headers })
+
+    // Se 401, tentar renovar o token e refazer a request
+    if (response.status === 401) {
+        const refreshed = await tryRefreshToken()
+
+        if (refreshed) {
+            // Refazer a request com o novo token
+            const retryHeaders = {
+                ...getAuthHeaders(),
+                ...(options.headers as Record<string, string> | undefined),
+            }
+            const retryResponse = await fetch(url, { ...options, headers: retryHeaders })
+
+            if (!retryResponse.ok) {
+                if (retryResponse.status === 401) {
+                    forceLogout()
+                }
+                throw new Error(await readErrorBody(retryResponse))
+            }
+
+            if (retryResponse.status === 204) return undefined as T
+            const ct = retryResponse.headers.get('Content-Type') || ''
+            if (!ct.includes('application/json')) return undefined as T
+            return retryResponse.json() as T
+        }
+
+        // Refresh falhou — forçar logout
+        forceLogout()
+        throw new Error('Sessão expirada. Faça login novamente.')
+    }
 
     if (!response.ok) {
         throw new Error(await readErrorBody(response))
@@ -99,10 +171,29 @@ export async function getProjetoById(id: number): Promise<Projeto> {
     return apiRequest<Projeto>(`/api/projetos/${id}/`)
 }
 
+// Atualizar um projeto existente
+export async function updateProjeto(id: number, payload: Partial<ProjetoCreatePayload>): Promise<Projeto> {
+    return apiRequest<Projeto>(`/api/projetos/${id}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+}
+
 // Deletar um projeto
 export async function deleteProjeto(id: number): Promise<void> {
     await apiRequest(`/api/projetos/${id}/`, { method: 'DELETE' })
 }
+
+export async function deleteArquivoUpload(projetoId: number, arquivoId: number): Promise<void> {
+    await apiRequest(`/api/projetos/${projetoId}/upload/${arquivoId}/`, { method: 'DELETE' })
+}
+
+export async function getArquivosUpload(projetoId: number): Promise<unknown[]> {
+    // Endpoint definido no back-end: GET /api/projetos/<projeto_id>/upload/
+    return apiRequest(`/api/projetos/${projetoId}/upload/`)
+}
+
 
 export async function createItemProjeto(
     projetoId: number,
@@ -115,15 +206,87 @@ export async function createItemProjeto(
     })
 }
 
+// Atualizar um item de material
+export async function updateItemProjeto(
+    projetoId: number,
+    itemId: number,
+    payload: Partial<ItemProjetoCreatePayload>
+): Promise<unknown> {
+    return apiRequest(`/api/projetos/${projetoId}/itens/${itemId}/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    })
+}
+
+// Excluir um item de material
+export async function deleteItemProjeto(
+    projetoId: number,
+    itemId: number,
+): Promise<void> {
+    await apiRequest(`/api/projetos/${projetoId}/itens/${itemId}/`, {
+        method: 'DELETE',
+    })
+}
+
+// Exportar materiais (ItemProjeto) como .xlsx
+export async function exportarMateriais(projetoId: number): Promise<void> {
+    const token = localStorage.getItem('access_token')
+    const res = await fetch(`${API_BASE}/api/projetos/${projetoId}/exportar-materiais/`, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+    })
+
+    if (!res.ok) {
+        const text = await res.text()
+        throw new Error(`Erro ${res.status}: ${text}`)
+    }
+
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+
+    const disposition = res.headers.get('Content-Disposition') || ''
+    const match = disposition.match(/filename="?(.+?)"?$/)
+    a.download = match ? match[1] : `materiais_${projetoId}.xlsx`
+
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+}
+
+// Gerar orçamento SINAPI para um arquivo DXF
+export async function gerarOrcamento(projetoId: number, arquivoId: number): Promise<unknown> {
+    return apiRequest(`/api/projetos/${projetoId}/gerar-orcamento/${arquivoId}/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+    })
+}
+
 // Upload de arquivo DXF para um projeto específico
 export async function uploadArquivoDXF(projetoId: number, file: File): Promise<unknown> {
     const formData = new FormData()
     formData.append('arquivo', file)
 
-    const res = await fetch(`${API_BASE}/api/projetos/${projetoId}/upload/`, {
-        method: 'POST',
-        body: formData
-    })
+    const url = `${API_BASE}/api/projetos/${projetoId}/upload/`
+
+    async function doUpload(headers: Record<string, string>): Promise<Response> {
+        return fetch(url, { method: 'POST', headers, body: formData })
+    }
+
+    let res = await doUpload(getAuthHeaders())
+
+    if (res.status === 401) {
+        const refreshed = await tryRefreshToken()
+        if (refreshed) {
+            res = await doUpload(getAuthHeaders())
+        } else {
+            forceLogout()
+            throw new Error('Sessão expirada. Faça login novamente.')
+        }
+    }
 
     if (!res.ok) {
         throw new Error(await readErrorBody(res))

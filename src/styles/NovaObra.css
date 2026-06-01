@@ -21,7 +21,7 @@
     z-index: 1;
 }
 
-.header-section { margin-bottom: 20px; text-align: left; }
+.header-section2 { margin-bottom: 20px; text-align: left; }
 .logo-group { display: flex; align-items: center; gap: 15px; }
 .logo-sq {
     background: #03409c;
@@ -49,7 +49,7 @@
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     width: 550px;
-    min-height: 720px;
+    min-height: 620px;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -116,6 +116,7 @@
     font-size: 16px;
     cursor: pointer;
     transition: 0.3s;
+    max-width: 250px;
 }
 .submit-btn:hover { background: #00a5e6; transform: translateY(-2px); }
 
@@ -269,7 +270,7 @@
 }
 
 /*header*/
-.header-section { margin-bottom: 20px; text-align: left; }
+.header-section2 { margin-bottom: 20px; text-align: left; }
 .logo-group { display: flex; align-items: center; gap: 15px; }
 .logo-sq {
     background: #03409c;
@@ -490,10 +491,16 @@
 .error-view p { color: #888; max-width: 350px; margin-bottom: 30px; }
 
 .retry-btn {
-    background: #444; /* cor neutra para o botão de tentar de novo */
+    background: #444;
     max-width: 250px;
 }
 .retry-btn:hover { background: #555; }
+
+.cancel-btn {
+    background: #2a2a2a !important;
+    border: 1px solid #444 !important;
+}
+.cancel-btn:hover { background: #3a3a3a !important; }
 
 #labelupload{
     display: flex;

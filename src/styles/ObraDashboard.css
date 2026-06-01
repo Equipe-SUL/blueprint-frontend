@@ -12,8 +12,8 @@
 }
 
 .obra-dashboard-container {
-	margin-left: 10%;
-	margin-right: 10%;
+	margin-left: 4%;
+	margin-right: 4%;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -266,7 +266,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 50;
+	z-index: 200;
 	padding: 20px;
 }
 
@@ -317,7 +317,8 @@
 	color: #b3bbcd;
 }
 
-.obra-form-field input {
+.obra-form-field input,
+.obra-form-field select {
 	background: #111111;
 	border: 1px solid #343434;
 	border-radius: 8px;
@@ -325,9 +326,12 @@
 	color: #ffffff;
 	font-size: 14px;
 	outline: none;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-.obra-form-field input:focus {
+.obra-form-field input:focus,
+.obra-form-field select:focus {
 	border-color: #3b82f6;
 }
 
@@ -465,6 +469,206 @@
 	font-size: 18px;
 }
 
+.materiais-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.materiais-toolbar-left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.materiais-filter-group {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	color: #b3bbcd;
+	font-size: 13px;
+}
+
+.materiais-select {
+	background: #1a1a1a;
+	border: 1px solid #333;
+	border-radius: 8px;
+	color: #e5e7eb;
+	padding: 6px 10px;
+	font-size: 13px;
+	cursor: pointer;
+	outline: none;
+	min-width: 140px;
+}
+
+.materiais-select:hover,
+.materiais-select:focus {
+	border-color: #3b82f6;
+}
+
+.materiais-reload-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #1a1a1a;
+	border: 1px solid #333;
+	border-radius: 8px;
+	color: #b3bbcd;
+	padding: 6px;
+	cursor: pointer;
+	transition: all 0.15s;
+}
+
+.materiais-reload-btn:hover {
+	color: #ffffff;
+	border-color: #3b82f6;
+	background: #222;
+}
+
+.materiais-reload-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.materiais-toolbar-right {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.materiais-actions-cell {
+	position: relative;
+	text-align: center;
+}
+
+.materiais-actions-wrapper {
+	display: inline-block;
+	position: relative;
+}
+
+.materiais-actions-btn {
+	background: none;
+	border: none;
+	color: #888;
+	cursor: pointer;
+	padding: 4px 6px;
+	border-radius: 6px;
+	transition: all 0.15s;
+}
+
+.materiais-actions-btn:hover {
+	color: #fff;
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.materiais-actions-menu {
+	position: absolute;
+	right: 0;
+	top: 100%;
+	background: #1a1a1a;
+	border: 1px solid #333;
+	border-radius: 8px;
+	min-width: 140px;
+	padding: 4px 0;
+	z-index: 50;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.materiais-actions-menu-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 8px 14px;
+	background: none;
+	border: none;
+	color: #e5e7eb;
+	font-size: 13px;
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.1s;
+}
+
+.materiais-actions-menu-item:hover {
+	background: rgba(59, 130, 246, 0.12);
+}
+
+.materiais-actions-menu-item--danger {
+	color: #e74c3c;
+}
+
+.materiais-actions-menu-item--danger:hover {
+	background: rgba(231, 76, 60, 0.12);
+}
+
+.edit-item-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.edit-item-header h3 {
+	margin: 0;
+	color: #f3f4f6;
+	font-size: 18px;
+}
+
+.edit-item-close {
+	background: none;
+	border: none;
+	color: #888;
+	cursor: pointer;
+	padding: 4px;
+	border-radius: 6px;
+	transition: color 0.15s;
+}
+
+.edit-item-close:hover {
+	color: #fff;
+}
+
+.edit-item-body {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.edit-item-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.edit-item-field label {
+	font-size: 12px;
+	color: #b3bbcd;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+
+.edit-item-field .cad-input:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.edit-item-hint {
+	font-size: 11px;
+	color: #60a5fa;
+	margin-top: 2px;
+}
+
+.edit-item-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+}
+
 .arquivos-grid {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -480,14 +684,57 @@
 
 .arquivo-card-title {
 	color: #ffffff;
-	font-size: 16px;
-	margin-bottom: 8px;
+	font-size: 15px;
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin: 0;
 }
 
-.arquivo-card-line {
-	color: #b3bbcd;
-	font-size: 13px;
-	margin-bottom: 6px;
+.arquivo-card-meta {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 10px;
+}
+
+.status-badge {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 3px 10px;
+	border-radius: 20px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.status-badge--pendente {
+	background: rgba(251, 191, 36, 0.15);
+	color: #fbbf24;
+	border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.status-badge--processado {
+	background: rgba(52, 211, 153, 0.15);
+	color: #34d399;
+	border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.status-badge--erro {
+	background: rgba(248, 113, 113, 0.15);
+	color: #f87171;
+	border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.arquivo-card-size {
+	color: #9ca3af;
+	font-size: 12px;
+}
+
+.arquivo-card-date {
+	color: #6b7280;
+	font-size: 12px;
+	margin-left: auto;
 }
 
 @media (max-width: 1100px) {
@@ -534,4 +781,525 @@
 	62.5%, 73% { left: 32px; top: 64px; }
 	75%, 85.5% { left: 0; top: 64px; }
 	87.5%, 98% { left: 0; top: 32px; }
+}
+
+/* Arquivo card clicável */
+.arquivo-card--clickable {
+	cursor: pointer;
+	transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.arquivo-card--clickable:hover {
+	border-color: #3b82f6;
+	background: linear-gradient(145deg, #1a1a2e, #0d0d0d);
+	transform: translateY(-2px);
+}
+
+.arquivo-card--clickable:focus-visible {
+	outline: 2px solid #3b82f6;
+	outline-offset: 2px;
+}
+
+/* Modal: nome do arquivo */
+.processar-arquivo-nome {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #e5e7eb;
+	font-size: 15px;
+	font-weight: 500;
+	margin-top: 4px;
+	padding: 10px 12px;
+	background: rgba(59, 130, 246, 0.08);
+	border: 1px solid rgba(59, 130, 246, 0.2);
+	border-radius: 8px;
+}
+
+.processar-arquivo-icon {
+	flex-shrink: 0;
+}
+
+/* Seletor de tipo de documento (Memorial vs Orçamento) */
+.processar-tipo-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	margin: 16px 0;
+}
+
+.processar-tipo-option {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	flex: 1;
+	padding: 12px 14px;
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.04);
+	cursor: pointer;
+	transition: all 0.15s;
+	color: #9ca3af;
+	font-size: 14px;
+	font-weight: 500;
+	user-select: none;
+}
+
+.processar-tipo-option:hover {
+	border-color: rgba(59, 130, 246, 0.4);
+	background: rgba(59, 130, 246, 0.06);
+	color: #e5e7eb;
+}
+
+.processar-tipo-option svg {
+	stroke: #9ca3af;
+	flex-shrink: 0;
+}
+
+.processar-tipo-option:hover svg {
+	stroke: #e5e7eb;
+}
+
+.processar-tipo-option--active {
+	border-color: #3b82f6;
+	background: rgba(59, 130, 246, 0.12);
+	color: #60a5fa;
+}
+
+.processar-tipo-option--active svg {
+	stroke: #60a5fa;
+}
+
+/* Botão com loading */
+.obra-modal-btn--loading {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	opacity: 0.85;
+	cursor: not-allowed;
+}
+
+.obra-modal-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* --- Arquivos (remoção) --- */
+.arquivo-card-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.arquivo-card-title-wrap {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	flex: 1;
+}
+
+.arquivo-card-icon {
+	color: #3b82f6;
+	flex-shrink: 0;
+}
+
+.icon-btn {
+	border: none;
+	background: transparent;
+	padding: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 10px;
+	cursor: pointer;
+	color: #b3bbcd;
+	transition: 0.2s;
+}
+
+.icon-btn:hover {
+	background: rgba(59, 130, 246, 0.16);
+	color: #ffffff;
+}
+
+.arquivo-delete-btn {
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	background: rgba(239, 68, 68, 0.08);
+	color: #fecaca;
+}
+
+.arquivo-delete-btn:hover {
+	background: rgba(239, 68, 68, 0.20);
+	border-color: rgba(239, 68, 68, 0.65);
+	color: #ffffff;
+}
+
+/* --- Modal padrão (DeleteArquivoModal) --- */
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 200;
+	padding: 20px;
+}
+
+.modal-content {
+	width: 100%;
+	max-width: 460px;
+	background: #151515;
+	border: 1px solid #333333;
+	border-radius: 12px;
+	padding: 20px;
+	box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.modal-title {
+	color: #ffffff;
+	font-size: 20px;
+}
+
+.modal-body {
+	color: #d5d8e1;
+	line-height: 1.5;
+	margin-bottom: 10px;
+}
+
+.modal-error {
+	color: #fecaca;
+	background: rgba(239, 68, 68, 0.12);
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	border-radius: 8px;
+	padding: 10px 12px;
+	font-size: 14px;
+	margin-top: 8px;
+	word-break: break-word;
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 18px;
+}
+
+.secondary-btn {
+	border: 1px solid #333333;
+	background: #2a2a2a;
+	color: #e5e7eb;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.secondary-btn:hover {
+	background: #3b3b3b;
+}
+
+.secondary-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.obra-modal-btn:not(:disabled) svg {
+	margin-right: 4px;
+}
+
+/* Spinner inline */
+.btn-spinner {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #ffffff;
+	border-radius: 50%;
+	animation: btn-spin 0.7s linear infinite;
+}
+
+@keyframes btn-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PDF VIEWER MODAL (expandido / quase fullscreen)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.pdf-viewer-overlay {
+	padding: 0;
+	background: rgba(0, 0, 0, 0.85);
+	backdrop-filter: blur(6px);
+}
+
+.pdf-viewer-modal {
+	width: 94vw;
+	height: 94vh;
+	max-width: 1400px;
+	display: flex;
+	flex-direction: column;
+	background: #111111;
+	border: 1px solid #2a2a2a;
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow:
+		0 0 0 1px rgba(59, 130, 246, 0.15),
+		0 24px 64px rgba(0, 0, 0, 0.6),
+		0 0 80px rgba(3, 64, 156, 0.08);
+	animation: pdf-viewer-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pdf-viewer-enter {
+	from {
+		opacity: 0;
+		transform: scale(0.95) translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+/* Header */
+.pdf-viewer-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 14px 20px;
+	background: linear-gradient(180deg, #161616 0%, #111111 100%);
+	border-bottom: 1px solid #2a2a2a;
+	flex-shrink: 0;
+}
+
+.pdf-viewer-title-wrap {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	min-width: 0;
+}
+
+.pdf-viewer-title-wrap h3 {
+	color: #ffffff;
+	font-size: 16px;
+	font-weight: 600;
+	margin: 0;
+	white-space: nowrap;
+}
+
+.pdf-viewer-icon {
+	flex-shrink: 0;
+}
+
+.pdf-viewer-filename {
+	color: #8ea2c2;
+	font-size: 13px;
+	padding: 4px 10px;
+	background: rgba(59, 130, 246, 0.08);
+	border: 1px solid rgba(59, 130, 246, 0.15);
+	border-radius: 6px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 320px;
+}
+
+/* Header actions */
+.pdf-viewer-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
+.pdf-viewer-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	border: none;
+	border-radius: 8px;
+	padding: 8px 14px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.pdf-viewer-btn--download {
+	background: #03409c;
+	color: #ffffff;
+}
+
+.pdf-viewer-btn--download:hover {
+	background: #0556c8;
+	box-shadow: 0 4px 12px rgba(3, 64, 156, 0.3);
+}
+
+.pdf-viewer-btn--close {
+	background: #2a2a2a;
+	color: #d5d8e1;
+	padding: 8px 10px;
+}
+
+.pdf-viewer-btn--close:hover {
+	background: #3b3b3b;
+	color: #ffffff;
+}
+
+/* PDF body / iframe */
+.pdf-viewer-body {
+	flex: 1;
+	position: relative;
+	background: #1a1a1a;
+	overflow: hidden;
+}
+
+.pdf-viewer-iframe {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: #ffffff;
+}
+
+/* --- Upload modal --- */
+.upload-modal-box {
+    border: 2px dashed #333333;
+    border-radius: 12px;
+    padding: 32px 24px;
+    cursor: pointer;
+    background: rgba(26, 26, 26, 0.5);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.upload-modal-box:hover {
+    border-color: #03409c;
+    background: rgba(3, 64, 156, 0.04);
+}
+
+.upload-modal-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.upload-modal-icon {
+    font-size: 28px;
+    color: #b3bbcd;
+}
+
+.upload-modal-help {
+    font-size: 11px;
+    color: #8ea2c2;
+}
+
+.upload-modal-file-list {
+    margin-top: 12px;
+    max-height: 120px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.upload-modal-file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #00ff88;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+.upload-modal-file-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.upload-modal-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-modal-file-remove {
+    border: none;
+    background: transparent;
+    color: #fecaca;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.upload-modal-file-remove:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+	.pdf-viewer-modal {
+		width: 100vw;
+		height: 100vh;
+		border-radius: 0;
+	}
+
+	.pdf-viewer-header {
+		flex-wrap: wrap;
+		padding: 12px 14px;
+		gap: 10px;
+	}
+
+	.pdf-viewer-title-wrap h3 {
+		font-size: 14px;
+	}
+
+	.pdf-viewer-filename {
+		display: none;
+	}
+
+	.pdf-viewer-btn--download span {
+		display: none;
+	}
+}
+
+
+.submit-btn {
+	border: none;
+	background: #03409c;
+	color: #ffffff;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.submit-btn:hover {
+	background: #00a5e6;
+}
+
+.submit-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
 }
